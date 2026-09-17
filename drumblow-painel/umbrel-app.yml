@@ -4,7 +4,7 @@ category: files
 name: Painel do Escritório
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-painel/icon.svg
-version: "0.2.0"
+version: "0.3.0"
 tagline: Mesa de trabalho do escritório de advocacia, no seu próprio servidor
 description: >-
   Painel de gestão para escritório de advocacia que roda no seu servidor: prazos, processos,
@@ -12,8 +12,8 @@ description: >-
   dispositivo.
 
 
-  Esta é a versão inicial (fundação): servidor, banco local, login e a primeira página. As telas de
-  trabalho chegam nas próximas versões.
+  Esta versão traz a base de dados de trabalho (leitura dos dados do assistente e atualização
+  agendada). As telas de trabalho chegam nas próximas versões.
 
 
   Depois de instalar, entre com o usuário e a senha mostrados pelo umbrelOS. A identidade do
@@ -29,6 +29,8 @@ path: ""
 defaultUsername: admin
 deterministicPassword: true
 releaseNotes: >-
-  Nova moldura do painel (barra lateral, área de trabalho, assistente e rodapé de status), tela de
-  entrada com bloqueio de tentativas, e leitura somente leitura das pastas de dados do assistente
-  do servidor, com o estado das fontes na tela de saúde.
+  Leitura completa dos dados do assistente do servidor para o painel: processos, prazos,
+  audiências, movimentações, documentos, honorários, clientes derivados e sugestões de qualificação
+  tiradas das procurações (para conferência), além da saúde do sistema (sincronização, backup,
+  fila). Um novo serviço de atualização roda sozinho depois das coletas do assistente e atende o
+  pedido "atualizar agora".

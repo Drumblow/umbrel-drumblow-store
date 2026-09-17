@@ -42,6 +42,17 @@ documents = "/fontes/hermes/documents"
 relatorios = "/fontes/hermes/relatorios"
 pasta_vault = ""
 pasta_relatorio_honorarios = ""
+
+# [escritorio.procuracao]
+# Advogados do escritório como as procurações os nomeiam; sem esta seção, as sugestões de cliente
+# pela procuração ficam desligadas.
+# outorgados = [
+#   { nome = "Nome Completo", oab = "0000/UF" },
+# ]
+
+[construtor]
+# Horários UTC do construtor agendado, logo depois das escritas do assistente.
+horarios_utc = ["09:55", "10:05", "11:35", "16:05", "22:05"]
 TOML
 fi
 
