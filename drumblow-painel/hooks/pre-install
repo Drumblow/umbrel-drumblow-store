@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# Roda antes do primeiro `compose up`. Prepara as pastas de dados com o dono do processo do
+# container (1000:1000) e cria uma configuração genérica se ainda não existir.
+#
+# O umbreld só exporta APP_DATA_DIR depois deste gancho: o caminho vem da posição do script.
+set -euo pipefail
+
+APP_DATA_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+DADOS="$APP_DATA_DIR/data"
+
+mkdir -p "$DADOS/config" "$DADOS/dados" "$DADOS/backups"
+
+CONFIG="$DADOS/config/config.local.toml"
+if [[ ! -f "$CONFIG" ]]; then
+  cat > "$CONFIG" <<'TOML'
+# Configuração local do Painel do Escritório (fica só neste servidor).
+#
+# A identidade do escritório é preenchida aqui, depois da instalação, e nunca vai para a imagem
+# nem para a loja. Depois de editar, reinicie o app.
+
+[servidor]
+endereco = "0.0.0.0:8080"
+pasta_web = "/app/web"
+
+[dados]
+pasta = "/dados"
+pasta_backups = "/backups"
+
+[escritorio]
+# Nome exibido na lateral e na tela de entrada.
+nome_exibicao = ""
+# Linha abaixo do nome (ex.: registro profissional e cidade).
+subtitulo = ""
+# Nome do assistente exibido no painel.
+nome_assistente = ""
+TOML
+fi
+
+chown -R 1000:1000 "$DADOS" 2>/dev/null || true
+chmod 700 "$DADOS/config" "$DADOS/dados" "$DADOS/backups" 2>/dev/null || true
+chmod 600 "$CONFIG" 2>/dev/null || true
+
+echo "[drumblow-painel] pastas de dados preparadas em $DADOS"

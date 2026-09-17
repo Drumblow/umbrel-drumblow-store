@@ -1,0 +1,25 @@
+version: "3.7"
+
+services:
+  app_proxy:
+    environment:
+      APP_HOST: drumblow-painel_web_1
+      APP_PORT: 8080
+      # Login do umbrelOS na frente do login próprio do painel (padrão; não desligar).
+
+  web:
+    image: ghcr.io/drumblow/painel-escritorio:0.1.0@sha256:812570c2ce57cef946fec143a26e02f43c0c1afd5cabf3e68dfc323c267cbeaf
+    command: ["servir"]
+    user: "1000:1000"
+    restart: on-failure
+    stop_grace_period: 30s
+    volumes:
+      # Pastas preparadas pelo hooks/pre-install (dono 1000:1000; configuração genérica criada uma vez).
+      - ${APP_DATA_DIR}/data/config:/config:ro
+      - ${APP_DATA_DIR}/data/dados:/dados
+      - ${APP_DATA_DIR}/data/backups:/backups
+    environment:
+      # Primeiro acesso: com o banco sem usuários, cria este usuário com a senha que o umbrelOS
+      # mostra na tela do app. Depois disso as variáveis são ignoradas.
+      PAINEL_USUARIO_INICIAL: admin
+      PAINEL_SENHA_INICIAL: ${APP_PASSWORD}

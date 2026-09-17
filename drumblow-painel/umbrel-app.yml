@@ -1,0 +1,33 @@
+manifestVersion: 1.1
+id: drumblow-painel
+category: files
+name: Painel do Escritório
+# Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
+icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-painel/icon.svg
+version: "0.1.0"
+tagline: Mesa de trabalho do escritório de advocacia, no seu próprio servidor
+description: >-
+  Painel de gestão para escritório de advocacia que roda no seu servidor: prazos, processos,
+  audiências, clientes e honorários numa tela só, com login próprio. Os dados não saem do
+  dispositivo.
+
+
+  Esta é a versão inicial (fundação): servidor, banco local, login e a primeira página. As telas de
+  trabalho chegam nas próximas versões.
+
+
+  Depois de instalar, entre com o usuário e a senha mostrados pelo umbrelOS. A identidade do
+  escritório é configurada no arquivo local de configuração do app.
+developer: Drumblow
+website: https://github.com/Drumblow/umbrel-drumblow-store
+dependencies: []
+repo: https://github.com/Drumblow/umbrel-drumblow-store
+support: https://github.com/Drumblow/umbrel-drumblow-store/issues
+port: 8552
+gallery: []
+path: ""
+defaultUsername: admin
+deterministicPassword: true
+releaseNotes: >-
+  Versão inicial: servidor, banco local com migrações automáticas, login com bloqueio de
+  tentativas e página inicial.
