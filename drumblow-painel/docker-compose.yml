@@ -8,7 +8,7 @@ services:
       # Login do umbrelOS na frente do login próprio do painel (padrão; não desligar).
 
   web:
-    image: ghcr.io/drumblow/painel-escritorio:0.3.1@sha256:70f3a86f6055b4453c5ad89894ae16e4048b8502e79c254897e097ccee95aab6
+    image: ghcr.io/drumblow/painel-escritorio:0.3.2@sha256:e388034ebf25bbb3d8a0e8cdb93f5ce278209d70574fc31585491504f01a6ddd
     command: ["servir"]
     user: "1000:1000"
     restart: on-failure
@@ -23,6 +23,7 @@ services:
       - ${UMBREL_ROOT}/app-data/hermes-agent/data/hermes/acervo:/fontes/hermes/acervo:ro
       - ${UMBREL_ROOT}/app-data/hermes-agent/data/hermes/documents:/fontes/hermes/documents:ro
       - ${UMBREL_ROOT}/app-data/hermes-agent/data/hermes/relatorios:/fontes/hermes/relatorios:ro
+      - ${UMBREL_ROOT}/app-data/hermes-agent/data/hermes/ocr_acervo:/fontes/hermes/ocr:ro
     environment:
       # Primeiro acesso: com o banco sem usuários, cria este usuário com a senha que o umbrelOS
       # mostra na tela do app. Depois disso as variáveis são ignoradas.
@@ -32,7 +33,7 @@ services:
   # Construtor agendado: mesma imagem, monta o read model a partir das fontes (horários do
   # [construtor] da configuração local, rodada nova do assistente e pedidos "atualizar agora").
   construtor:
-    image: ghcr.io/drumblow/painel-escritorio:0.3.1@sha256:70f3a86f6055b4453c5ad89894ae16e4048b8502e79c254897e097ccee95aab6
+    image: ghcr.io/drumblow/painel-escritorio:0.3.2@sha256:e388034ebf25bbb3d8a0e8cdb93f5ce278209d70574fc31585491504f01a6ddd
     command: ["construir", "--agendado"]
     user: "1000:1000"
     restart: on-failure
@@ -50,3 +51,4 @@ services:
       - ${UMBREL_ROOT}/app-data/hermes-agent/data/hermes/acervo:/fontes/hermes/acervo:ro
       - ${UMBREL_ROOT}/app-data/hermes-agent/data/hermes/documents:/fontes/hermes/documents:ro
       - ${UMBREL_ROOT}/app-data/hermes-agent/data/hermes/relatorios:/fontes/hermes/relatorios:ro
+      - ${UMBREL_ROOT}/app-data/hermes-agent/data/hermes/ocr_acervo:/fontes/hermes/ocr:ro
