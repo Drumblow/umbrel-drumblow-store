@@ -8,7 +8,7 @@ services:
       # Login do umbrelOS na frente do login próprio do painel (padrão; não desligar).
 
   web:
-    image: ghcr.io/drumblow/painel-escritorio:0.1.0@sha256:812570c2ce57cef946fec143a26e02f43c0c1afd5cabf3e68dfc323c267cbeaf
+    image: ghcr.io/drumblow/painel-escritorio:0.2.0@sha256:2c2a8036c27c78b9043f9099349e1b34d41c5924ad6c14ffad7a0f2f38971ffe
     command: ["servir"]
     user: "1000:1000"
     restart: on-failure
@@ -18,6 +18,11 @@ services:
       - ${APP_DATA_DIR}/data/config:/config:ro
       - ${APP_DATA_DIR}/data/dados:/dados
       - ${APP_DATA_DIR}/data/backups:/backups
+      # Fontes do Hermes, SÓ LEITURA (docs do projeto: F0-09). Só as três subpastas, nunca a raiz
+      # (lá ficam as credenciais do Hermes). O painel nunca escreve nelas.
+      - ${UMBREL_ROOT}/app-data/hermes-agent/data/hermes/acervo:/fontes/hermes/acervo:ro
+      - ${UMBREL_ROOT}/app-data/hermes-agent/data/hermes/documents:/fontes/hermes/documents:ro
+      - ${UMBREL_ROOT}/app-data/hermes-agent/data/hermes/relatorios:/fontes/hermes/relatorios:ro
     environment:
       # Primeiro acesso: com o banco sem usuários, cria este usuário com a senha que o umbrelOS
       # mostra na tela do app. Depois disso as variáveis são ignoradas.

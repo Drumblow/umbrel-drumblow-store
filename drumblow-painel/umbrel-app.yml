@@ -4,7 +4,7 @@ category: files
 name: Painel do Escritório
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-painel/icon.svg
-version: "0.1.0"
+version: "0.2.0"
 tagline: Mesa de trabalho do escritório de advocacia, no seu próprio servidor
 description: >-
   Painel de gestão para escritório de advocacia que roda no seu servidor: prazos, processos,
@@ -29,5 +29,6 @@ path: ""
 defaultUsername: admin
 deterministicPassword: true
 releaseNotes: >-
-  Versão inicial: servidor, banco local com migrações automáticas, login com bloqueio de
-  tentativas e página inicial.
+  Nova moldura do painel (barra lateral, área de trabalho, assistente e rodapé de status), tela de
+  entrada com bloqueio de tentativas, e leitura somente leitura das pastas de dados do assistente
+  do servidor, com o estado das fontes na tela de saúde.

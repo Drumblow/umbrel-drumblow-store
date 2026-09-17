@@ -33,6 +33,15 @@ nome_exibicao = ""
 subtitulo = ""
 # Nome do assistente exibido no painel.
 nome_assistente = ""
+
+[fontes.hermes]
+# Pastas do assistente montadas SÓ LEITURA pelo compose. Os nomes das subpastas do escritório
+# (vault e relatório de honorários) são preenchidos depois da instalação.
+acervo = "/fontes/hermes/acervo"
+documents = "/fontes/hermes/documents"
+relatorios = "/fontes/hermes/relatorios"
+pasta_vault = ""
+pasta_relatorio_honorarios = ""
 TOML
 fi
 
