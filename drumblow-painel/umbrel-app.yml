@@ -4,7 +4,7 @@ category: files
 name: Painel do Escritório
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-painel/icon.svg
-version: "0.3.2"
+version: "0.3.3"
 tagline: Mesa de trabalho do escritório de advocacia, no seu próprio servidor
 description: >-
   Painel de gestão para escritório de advocacia que roda no seu servidor: prazos, processos,
@@ -29,8 +29,6 @@ path: ""
 defaultUsername: admin
 deterministicPassword: true
 releaseNotes: >-
-  A tela inicial "Meu dia" agora mostra os dados reais do escritório: o valor a receber com a barra
-  de situação, prazos de hoje com atalho para o processo, próximas audiências, a fila do que precisa
-  de atenção e o que chegou de novo. O rodapé passa a dizer, em linguagem simples, como estão a
-  sincronização, o backup e a fila do servidor. As sugestões tiradas das procurações passam a usar a
-  leitura de melhor qualidade dos documentos.
+  As procurações digitalizadas agora são lidas mesmo quando o nome do outorgante vem escrito em
+  caixa normal, e não só em maiúsculas: muito mais clientes identificados para conferência.
+  Também deixa de confundir carimbo de assinatura e rótulo de formulário com nome de pessoa.
