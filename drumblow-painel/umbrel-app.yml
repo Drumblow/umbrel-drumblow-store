@@ -4,7 +4,7 @@ category: files
 name: Painel do Escritório
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-painel/icon.svg
-version: "0.3.4"
+version: "0.3.5"
 tagline: Mesa de trabalho do escritório de advocacia, no seu próprio servidor
 description: >-
   Painel de gestão para escritório de advocacia que roda no seu servidor: prazos, processos,
@@ -29,7 +29,8 @@ path: ""
 defaultUsername: admin
 deterministicPassword: true
 releaseNotes: >-
-  Nova tela de Prazos: as intimações do painel do PJe agrupadas como no próprio PJe, com filtros,
-  contagem regressiva ("vence hoje", "vencido há 2 dias") e aviso quando a classificação do
-  tribunal está desatualizada. Cada prazo abre um painel de detalhe onde é possível marcar como
-  tratado, "vou fazer" ou delegado, com nota e histórico de quem mudou o quê — e desfazer.
+  Prazo já respondido no PJe deixa de aparecer como vencido ou pendente: a tela de Prazos, o cartão
+  da home e a fila "Precisa de você" passam a seguir a mesma regra. A tela mostra todos os
+  expedientes conhecidos, avisa quando o PJe informa um número diferente do que listou, e alerta se
+  o painel do PJe for lido na conta errada. Novas telas de dados: busca de processos (por número,
+  mesmo incompleto, parte, classe, vara e caixa) e busca dentro do texto dos autos.
