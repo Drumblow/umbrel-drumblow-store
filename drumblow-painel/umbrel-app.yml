@@ -32,5 +32,4 @@ releaseNotes: >-
   Prazo já respondido no PJe deixa de aparecer como vencido ou pendente: a tela de Prazos, o cartão
   da home e a fila "Precisa de você" passam a seguir a mesma regra. A tela mostra todos os
   expedientes conhecidos, avisa quando o PJe informa um número diferente do que listou, e alerta se
-  o painel do PJe for lido na conta errada. Novas telas de dados: busca de processos (por número,
-  mesmo incompleto, parte, classe, vara e caixa) e busca dentro do texto dos autos.
+  o painel do PJe for lido na conta errada.
