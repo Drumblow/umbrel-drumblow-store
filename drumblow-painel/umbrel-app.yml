@@ -4,7 +4,7 @@ category: files
 name: Painel do Escritório
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-painel/icon.svg
-version: "0.3.6"
+version: "0.3.7"
 tagline: Mesa de trabalho do escritório de advocacia, no seu próprio servidor
 description: >-
   Painel de gestão para escritório de advocacia que roda no seu servidor: prazos, processos,
@@ -29,8 +29,7 @@ path: ""
 defaultUsername: admin
 deterministicPassword: true
 releaseNotes: >-
-  Tela de Prazos mais enxuta e sem rolagem lateral em nenhum aparelho: prazo em poucos caracteres
-  ("4 dias"), check verde para o que foi respondido, só o primeiro nome do destinatário e a vara
-  abreviada, com tudo por extenso ao passar o mouse. O detalhe do prazo abre ao lado da lista, que
-  continua navegável, e a divisória pode ser arrastada para ajustar a largura. Novo botão para
-  imprimir ou salvar em PDF os prazos filtrados.
+  Correção: a cópia do acervo que o painel lê voltou a se atualizar. Ela estava parada desde 17/09
+  porque o Hermes passou a deixar o acervo aberto entre uma gravação e outra; documentos e procurações novos voltam
+  a entrar no painel. Nos prazos, o encerramento dos registros antigos passa a vir direto do Hermes,
+  sem o painel deduzir por conta própria.
