@@ -4,7 +4,7 @@ category: files
 name: Painel do Escritório
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-painel/icon.svg
-version: "0.3.8"
+version: "0.3.9"
 tagline: Mesa de trabalho do escritório de advocacia, no seu próprio servidor
 description: >-
   Painel de gestão para escritório de advocacia que roda no seu servidor: prazos, processos,
@@ -29,8 +29,4 @@ path: ""
 defaultUsername: admin
 deterministicPassword: true
 releaseNotes: >-
-  Nova tela de Processos: lista com busca por número ou nome, filtros e a visão pelas caixas do PJe;
-  ficha de cada processo com resumo, movimentações mês a mês (o clipe abre o PDF), documentos, partes,
-  honorários e busca no texto dos autos, que mostra de onde veio cada trecho e marca o texto pouco
-  confiável. O rodapé passa a mostrar a cópia do acervo e fica vermelho se o painel passar mais de
-  26 horas sem conseguir conferi-la.
+  Nova tela de Honorários dos dativos: cada processo em que você foi nomeada aparece num grupo — falta cobrar (em ordem de prazo, 5 anos contados da sentença), conferir antes de cobrar (com o motivo), sentença sem honorários, aguardando, pago e em andamento — e a aba das ações de cobrança mostra os processos que cada uma cobra. O botão Conferir registra o que você verificou (já cobrei por ação nova ou na PGE, já recebi, não cobrei, não tem honorário, não é meu), com desfazer. A ficha, o cartão do dinheiro e a lista da página inicial seguem a mesma regra: processo já cobrado não aparece mais como falta cobrar.
