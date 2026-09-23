@@ -4,7 +4,7 @@ category: files
 name: Painel do Escritório
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-painel/icon.svg
-version: "0.3.12"
+version: "0.3.13"
 tagline: Mesa de trabalho do escritório de advocacia, no seu próprio servidor
 description: >-
   Painel de gestão para escritório de advocacia que roda no seu servidor: prazos, processos,
@@ -29,4 +29,4 @@ path: ""
 defaultUsername: admin
 deterministicPassword: true
 releaseNotes: >-
-  Todas as páginas do menu agora funcionam. Clientes: a lista com busca pelo nome, pelas iniciais ou pelo número do processo, e a ficha de cada cliente, com o cadastro (telefone, e-mail, endereço, quem indicou e observações, com o histórico de cada mudança), os atendimentos registrados e os dados sugeridos pela procuração, que só entram quando você confirma. Tarefas: um quadro com a fazer, fazendo, aguardando e feito, com prazo, responsável e ligação com o processo; mover por arrastar ou pelo botão "mover para"; concluir pede um resumo e nada se apaga. Audiências: a agenda de Próximas, Hoje, Amanhã, Semana, Mês e Passadas, com o link da audiência para copiar, a exportação para o Google Agenda (.ics) e a pauta para imprimir. Documentos: todos os documentos do acervo com busca, os que chegaram por último e os relatórios do escritório. Relatórios: a carteira de processos e os alertas (processo parado, prazo não tratado, cliente sem contato, dativo sem pedido, RPV parado, conferir sigilo e ligação duvidosa), cada um com o porquê. Configurações: o estado do sistema em frases simples, com o que fazer; as suas sessões abertas e a troca de senha; e a versão do painel.
+  Ajustes que você pediu. Ficha do cliente: o cadastro ganhou "Usa WhatsApp", e o botão do WhatsApp só aparece para quem usa; CPF, RG, profissão e estado civil agora também podem ser digitados no cadastro, além de virem da procuração. Audiências: a audiência cancelada ou redesignada sai de Próximas na hora (nas abas por dia e em Passadas ela continua, riscada). Documentos: tipos que só diferem em maiúsculas viram um tipo só. Relatórios: alerta novo para processo ativo sem nenhuma movimentação; "RPV parado" passa a contar também o alvará pedido ou determinado e ainda não expedido; "Dativo sem pedido" e "Conferir sigilo/capa" ficam nos Relatórios até a situação mudar, mesmo depois de você concluir o item em "Precisa de você".
