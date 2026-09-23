@@ -4,7 +4,7 @@ category: files
 name: Painel do Escritório
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-painel/icon.svg
-version: "0.3.10"
+version: "0.3.11"
 tagline: Mesa de trabalho do escritório de advocacia, no seu próprio servidor
 description: >-
   Painel de gestão para escritório de advocacia que roda no seu servidor: prazos, processos,
@@ -29,4 +29,4 @@ path: ""
 defaultUsername: admin
 deterministicPassword: true
 releaseNotes: >-
-  A ficha do processo ganhou três coisas: o botão Abrir no PJe, que abre os autos numa aba nova (se o PJe pedir, você entra com a sua conta — o painel nunca entra no PJe por você); a marca Acompanhar, com a estrela, para os processos que você quer de olho; e etiquetas livres, que você escreve do seu jeito e o painel sugere as que você já usou. Os processos acompanhados aparecem num bloco novo da página inicial, com o último movimento e o aviso de movimentação nova, e viram um filtro na lista de Processos. A busca da lista também acha pela etiqueta. E há uma aba de Anotações em cada processo: você escreve, edita e apaga (com desfazer), e o histórico guarda quem mudou o quê e quando.
+  Honorários agora lê os autos. A cada atualização, o painel lê o texto dos documentos públicos de cada processo e mostra em que ponto está a cobrança: RPV expedido, depósito feito, alvará pedido, alvará determinado e alvará expedido, com a data e há quantos dias. A aba Ações de cobrança abre com as ações que aguardam, contadas por etapa, e cada linha diz o que falta (por exemplo, "falta pedir o alvará"). Uma ação só conta como paga com o alvará expedido ou a extinção pelo pagamento nos autos; quando os autos e o levantamento discordam, ela vai para conferir, com o motivo. A ficha do processo também mostra esse caminho. Há uma aba nova, Por procuração, para os processos sem nomeação de dativa nos autos, com procuração sua e sem nenhum sinal de honorário. O honorário fixado na sentença passa a ser lido nos autos, com o valor quando a sentença traz. Texto de leitura ruim nunca vira fato: fica só como sinal para conferir.
