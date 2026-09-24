@@ -8,7 +8,7 @@ services:
       # Login do umbrelOS na frente do login próprio do painel (padrão; não desligar).
 
   web:
-    image: ghcr.io/drumblow/painel-escritorio:0.3.14@sha256:6a69c4b504a6e918756011715c37949a591a8ad6886295b8fe7125dae9084955
+    image: ghcr.io/drumblow/painel-escritorio:0.3.15@sha256:df8aeb34a0ef6c6a6afb5959b037942255128b73bb530b99812928f004923087
     command: ["servir"]
     user: "1000:1000"
     restart: on-failure
@@ -33,7 +33,7 @@ services:
   # Construtor agendado: mesma imagem, monta o read model a partir das fontes (horários do
   # [construtor] da configuração local, rodada nova do assistente e pedidos "atualizar agora").
   construtor:
-    image: ghcr.io/drumblow/painel-escritorio:0.3.14@sha256:6a69c4b504a6e918756011715c37949a591a8ad6886295b8fe7125dae9084955
+    image: ghcr.io/drumblow/painel-escritorio:0.3.15@sha256:df8aeb34a0ef6c6a6afb5959b037942255128b73bb530b99812928f004923087
     command: ["construir", "--agendado"]
     user: "1000:1000"
     restart: on-failure

@@ -4,7 +4,7 @@ category: files
 name: Painel do Escritório
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-painel/icon.svg
-version: "0.3.14"
+version: "0.3.15"
 tagline: Mesa de trabalho do escritório de advocacia, no seu próprio servidor
 description: >-
   Painel de gestão para escritório de advocacia que roda no seu servidor: prazos, processos,
@@ -40,4 +40,4 @@ backupIgnore:
   - data/dados/cache
   - data/backups/*.tmp
 releaseNotes: >-
-  Honorários contratuais: a tela de Honorários ganha a conta "Contratuais", separada dos dativos, e a ficha do cliente ganha a aba Contratos, com as parcelas, os pagamentos e as anotações de cobrança; a situação (em dia, atrasado, quitado, isento, a combinar) aparece sozinha. Audiências: a gaveta ganha a lista de preparo para marcar o que já está pronto e o resultado em um clique; o próximo passo com data vira tarefa no quadro; a agenda mostra o resultado e o preparo, e a pauta impressa traz os itens para marcar à mão. Cópia de segurança: o painel copia os próprios dados todo dia e guarda as últimas cópias; se os dados sumirem, ele se restaura sozinho da cópia mais recente. O cartão de Backup das Configurações mostra a última cópia.
+  Assistente no painel: o painel da direita passa a conversar com o assistente do escritório, com o modelo configurado no Hermes; ele vê os processos normais, nunca os de segredo de justiça, e a mensagem que cita um processo protegido não sai do painel. Modelos de mensagem: o WhatsApp e o e-mail da ficha do cliente abrem a mensagem já preenchida, editável antes de enviar; os modelos ficam na nova aba Escritório das Configurações. Relatórios: nova aba Produtividade, mês a mês, com a comparação com o mês anterior. Configurações: nova aba Como usar, com o passo a passo de cada tela.
