@@ -23,4 +23,4 @@ mkdir -p \
 chown -R 1000:1000 "$APP_DATA_DIR/src" "$APP_DATA_DIR/backups" 2>/dev/null || true
 chmod 700 "$APP_DATA_DIR/src" "$APP_DATA_DIR/backups" 2>/dev/null || true
 
-echo "[leiloes-painel] pastas preparadas em $APP_DATA_DIR/src (copie os projetos para lá)"
+echo "[drumblow-leiloes] pastas preparadas em $APP_DATA_DIR/src (copie os projetos para lá)"

@@ -14,13 +14,13 @@ App Store → ⋯ (canto superior direito) → **Community App Stores** → cole
 | ID | Nome | Porta |
 |---|---|---|
 | `drumblow-painel` | Painel do Escritório | 8552 |
-| `leiloes-painel` | Leilões — Coletor e Painel | 8790 |
+| `drumblow-leiloes` | Leilões — Coletor e Painel | 8790 |
 
-### leiloes-painel
+### drumblow-leiloes
 
 Ao contrário dos outros apps, **não usa imagem própria**: roda na imagem oficial `node:22-alpine`
 e o código dos quatro projetos é copiado depois da instalação para
-`~/umbrel/app-data/leiloes-painel/src` (montado em `/projetos` dentro dos containers). Assim nada
+`~/umbrel/app-data/drumblow-leiloes/src` (montado em `/projetos` dentro dos containers). Assim nada
 do projeto precisa ser publicado em registry. Enquanto o código não estiver lá, os containers
 reiniciarão em laço — o gancho `hooks/pre-install` já deixa as pastas prontas.
 

@@ -12,7 +12,7 @@ version: "3.7"
 services:
   app_proxy:
     environment:
-      APP_HOST: leiloes-painel_web_1
+      APP_HOST: drumblow-leiloes_web_1
       APP_PORT: 8787
 
   # ── Painel (único serviço com porta exposta pelo umbrelOS) ─────────────
