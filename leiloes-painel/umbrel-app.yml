@@ -1,0 +1,48 @@
+manifestVersion: 1.1
+id: leiloes-painel
+category: files
+name: Leilões — Coletor e Painel
+# Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
+icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/leiloes-painel/icon.svg
+version: "1.0.0"
+tagline: Coleta os leilões de Barrie e do HiBid, guarda lances e mostra o valor de mercado
+description: >-
+  Coletor e painel dos leilões que você acompanha (King of the North e Encore Auctions/HiBid).
+  Guarda o catálogo, o histórico completo de lances, o preço final de cada arremate e o valor de
+  referência de cada produto (vendas anteriores do mesmo item, por condição, e busca de preço na
+  Amazon quando o item é novo/usado), além do custo real com as taxas de cada casa (prêmio do
+  comprador, manuseio, HST e taxa de cartão).
+
+
+  O painel é só leitura dos bancos: você filtra por site, categoria, condição e faixa de preço,
+  ordena por maior desconto em relação ao valor de referência e vê a ficha de cada lote com a
+  linha do tempo dos lances. Os dados não saem do seu servidor.
+
+
+  Depois de instalar, os serviços começam em alguns segundos. Os coletores e o serviço de valores
+  aparecem no painel com o horário do último sinal de vida.
+developer: Drumblow
+website: https://github.com/Drumblow/umbrel-drumblow-store
+dependencies: []
+repo: https://github.com/Drumblow/umbrel-drumblow-store
+support: https://github.com/Drumblow/umbrel-drumblow-store/issues
+port: 8790
+gallery: []
+path: ""
+backupIgnore:
+  # O banco vivo fica fora do backup do umbrelOS (uma cópia no meio de uma escrita pode voltar
+  # estragada). O app mantém cópias consistentes (VACUUM INTO) em backups/, e são essas que vão.
+  - src/kotn-tracker/data/kotn.db
+  - src/kotn-tracker/data/kotn.db-wal
+  - src/kotn-tracker/data/kotn.db-shm
+  - src/encore-tracker/data/encore.db
+  - src/encore-tracker/data/encore.db-wal
+  - src/encore-tracker/data/encore.db-shm
+  - src/product-values/data/values.db
+  - src/product-values/data/values.db-wal
+  - src/product-values/data/values.db-shm
+  - backups/*.db
+releaseNotes: >-
+  Primeira versão: coletores do King of the North (websocket + catálogo) e do Encore/HiBid
+  (GraphQL), historiador de lances, serviço de valor de mercado (comps internos por condição +
+  Amazon) e painel unificado com filtros, ficha do lote, taxa de cada casa e backup próprio.

@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Roda antes do primeiro `compose up`.
+# O umbreld só exporta APP_DATA_DIR depois deste gancho: o caminho vem da posição do script.
+#
+# Prepara as pastas com o dono do processo dos containers (1000:1000). O CÓDIGO não é baixado
+# aqui (o projeto não é público): depois de instalar, os quatro projetos são copiados para
+# src/ por SSH — veja deploy/README.md no repositório de quem opera.
+set -euo pipefail
+
+APP_DATA_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+
+mkdir -p \
+  "$APP_DATA_DIR/src" \
+  "$APP_DATA_DIR/src/kotn-tracker/data" \
+  "$APP_DATA_DIR/src/kotn-tracker/logs" \
+  "$APP_DATA_DIR/src/encore-tracker/data" \
+  "$APP_DATA_DIR/src/encore-tracker/logs" \
+  "$APP_DATA_DIR/src/product-values/data" \
+  "$APP_DATA_DIR/src/product-values/logs" \
+  "$APP_DATA_DIR/src/auction-dashboard/logs" \
+  "$APP_DATA_DIR/backups"
+
+chown -R 1000:1000 "$APP_DATA_DIR/src" "$APP_DATA_DIR/backups" 2>/dev/null || true
+chmod 700 "$APP_DATA_DIR/src" "$APP_DATA_DIR/backups" 2>/dev/null || true
+
+echo "[leiloes-painel] pastas preparadas em $APP_DATA_DIR/src (copie os projetos para lá)"

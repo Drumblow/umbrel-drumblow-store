@@ -1,0 +1,100 @@
+version: "3.7"
+
+# Leilões — Coletor e Painel
+#
+# O código-fonte (os quatro projetos) NÃO fica na imagem: ele é copiado depois da instalação para
+# ${APP_DATA_DIR}/src e montado em /projetos dentro de cada serviço. Assim o projeto não precisa
+# ser publicado em imagem/registry nenhum.
+#
+# Imagem base: node:22-alpine (oficial). A versão 22.13 do Node já traz o módulo node:sqlite sem
+# flag experimental — é o banco dos coletores.
+
+services:
+  app_proxy:
+    environment:
+      APP_HOST: leiloes-painel_web_1
+      APP_PORT: 8787
+
+  # ── Painel (único serviço com porta exposta pelo umbrelOS) ─────────────
+  web:
+    image: node:22-alpine
+    command: ["node", "--no-warnings", "server.js"]
+    working_dir: /projetos/auction-dashboard
+    user: "1000:1000"
+    restart: unless-stopped
+    stop_grace_period: 20s
+    environment:
+      PROJ_ROOT: /projetos
+      LEILOES_SERVER: "1"
+      PORT: "8787"
+    volumes:
+      - ${APP_DATA_DIR}/src:/projetos
+
+  # ── KOTN: lances ao vivo (websocket) ───────────────────────────────────
+  kotn-collector:
+    image: node:22-alpine
+    command: ["node", "--no-warnings", "src/collector.js"]
+    working_dir: /projetos/kotn-tracker
+    user: "1000:1000"
+    restart: unless-stopped
+    stop_grace_period: 20s
+    volumes:
+      - ${APP_DATA_DIR}/src:/projetos
+
+  # ── KOTN: catálogo + estado dos itens ──────────────────────────────────
+  kotn-sweeper:
+    image: node:22-alpine
+    command: ["node", "--no-warnings", "src/sweeper.js"]
+    working_dir: /projetos/kotn-tracker
+    user: "1000:1000"
+    restart: unless-stopped
+    stop_grace_period: 30s
+    volumes:
+      - ${APP_DATA_DIR}/src:/projetos
+
+  # ── Encore/HiBid: lotes + fechamento ───────────────────────────────────
+  encore-sweeper:
+    image: node:22-alpine
+    command: ["node", "--no-warnings", "src/sweeper.js"]
+    working_dir: /projetos/encore-tracker
+    user: "1000:1000"
+    restart: unless-stopped
+    stop_grace_period: 30s
+    volumes:
+      - ${APP_DATA_DIR}/src:/projetos
+
+  # ── Encore/HiBid: históricos de lances (fila própria) ──────────────────
+  encore-historian:
+    image: node:22-alpine
+    command: ["node", "--no-warnings", "src/historian.js"]
+    working_dir: /projetos/encore-tracker
+    user: "1000:1000"
+    restart: unless-stopped
+    stop_grace_period: 30s
+    volumes:
+      - ${APP_DATA_DIR}/src:/projetos
+
+  # ── Valor de mercado (comps internos por condição + Amazon.ca) ─────────
+  valores:
+    image: node:22-alpine
+    command: ["node", "--no-warnings", "src/worker.js", "--loop"]
+    working_dir: /projetos/product-values
+    user: "1000:1000"
+    restart: unless-stopped
+    stop_grace_period: 30s
+    volumes:
+      - ${APP_DATA_DIR}/src:/projetos
+
+  # ── Backup consistente dos bancos (VACUUM INTO, a cada 6 h, 7 cópias) ──
+  backup:
+    image: node:22-alpine
+    command: ["node", "--no-warnings", "src/backup.js"]
+    working_dir: /projetos/auction-dashboard
+    user: "1000:1000"
+    restart: unless-stopped
+    environment:
+      PROJ_ROOT: /projetos
+      BACKUP_INTERVALO_HORAS: "6"
+      BACKUP_MANTER: "7"
+    volumes:
+      - ${APP_DATA_DIR}/src:/projetos
