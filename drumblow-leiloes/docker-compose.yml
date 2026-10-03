@@ -27,6 +27,9 @@ services:
       PROJ_ROOT: /projetos
       LEILOES_SERVER: "1"
       PORT: "8787"
+      # 0.0.0.0 é obrigatório em container: com 127.0.0.1 o gateway do umbrelOS não alcança o
+      # painel e a porta do app nunca é publicada (foi o que travou a primeira instalação).
+      HOST: "0.0.0.0"
     volumes:
       - ${APP_DATA_DIR}/src:/projetos
 

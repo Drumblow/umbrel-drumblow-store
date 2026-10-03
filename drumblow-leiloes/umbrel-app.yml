@@ -4,7 +4,7 @@ category: files
 name: Leilões — Coletor e Painel
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-leiloes/icon.svg
-version: "1.0.0"
+version: "1.0.1"
 tagline: Coleta os leilões de Barrie e do HiBid, guarda lances e mostra o valor de mercado
 description: >-
   Coletor e painel dos leilões que você acompanha (King of the North e Encore Auctions/HiBid).
@@ -43,6 +43,12 @@ backupIgnore:
   - src/product-values/data/values.db-shm
   - backups/*.db
 releaseNotes: >-
+  1.0.1: o painel passa a escutar em 0.0.0.0 dentro do container (com 127.0.0.1 o gateway do
+  umbrelOS não alcançava e a porta do app não era publicada). Heartbeat do painel agora reconhece
+  os logs diários dos containers. Backup: corrige colisão de nome quando duas cópias caem na mesma
+  hora e mantém a cópia mais recente como ultimo-<banco>.db.
+
+
   Primeira versão: coletores do King of the North (websocket + catálogo) e do Encore/HiBid
   (GraphQL), historiador de lances, serviço de valor de mercado (comps internos por condição +
   Amazon) e painel unificado com filtros, ficha do lote, taxa de cada casa e backup próprio.
