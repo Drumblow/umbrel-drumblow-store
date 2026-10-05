@@ -4,7 +4,7 @@ category: files
 name: Leilões — Coletor e Painel
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-leiloes/icon.svg
-version: "1.0.2"
+version: "1.0.3"
 tagline: Coleta os leilões de Barrie e do HiBid, guarda lances e mostra o valor de mercado
 description: >-
   Coletor e painel dos leilões que você acompanha (King of the North e Encore Auctions/HiBid).
@@ -43,6 +43,11 @@ backupIgnore:
   - src/product-values/data/values.db-shm
   - backups/*.db
 releaseNotes: >-
+  1.0.3: serviço Tailscale — túnel de saída (Funnel) que expõe a porta 8788 (o porteiro, com
+  senha) em https://leiloes-painel.<tailnet>.ts.net, sem abrir porta nenhuma. Dentro do tailnet,
+  a porta 8443 serve o painel direto. A chave fica em tailscale.env, fora do repositório.
+
+
   1.0.2: novo serviço "porteiro" (auth-proxy) — exige usuário e senha (HTTP Basic) e limita
   requisições por IP, para o acesso externo via Tailscale Funnel + função na Vercel. A senha é
   gerada na instalação em auth.env, fora do repositório; o acesso pela LAN e pela interface do
