@@ -33,6 +33,49 @@ services:
     volumes:
       - ${APP_DATA_DIR}/src:/projetos
 
+  # ── Porteiro do acesso externo (Basic auth + limite de requisições) ────
+  # Só existe por causa do caminho público: Tailscale Funnel → função na Vercel.
+  # O acesso pela LAN e pela interface do umbrelOS continua direto no painel (web),
+  # sem senha extra. Sem o arquivo de senha o serviço não sobe (proteção).
+  auth-proxy:
+    image: node:22-alpine
+    command: ["node", "--no-warnings", "auth-proxy.js"]
+    working_dir: /projetos/auction-dashboard
+    user: "1000:1000"
+    restart: unless-stopped
+    stop_grace_period: 20s
+    environment:
+      AUTH_PORT: "8788"
+      AUTH_DESTINO_HOST: "web"
+      AUTH_DESTINO_PORTA: "8787"
+      PAINEL_AUTH_ARQUIVO: /segredos/auth.env
+    volumes:
+      - ${APP_DATA_DIR}/src:/projetos
+      - ${APP_DATA_DIR}/auth.env:/segredos/auth.env:ro
+
+  # ── Tailscale (túnel de saída; habilitar depois de ter a chave) ────────
+  # Não publica porta nenhuma: o container disca para fora e o Funnel entrega
+  # https://<nome>.<tailnet>.ts.net → auth-proxy (8788, com senha) → painel.
+  # Para ligar: 1) crie a chave em login.tailscale.com (Settings → Keys, tag:tag:leiloes)
+  #             2) echo "TS_AUTHKEY=tskey-auth-..." > ${APP_DATA_DIR}/tailscale.env
+  #             3) descomente este bloco e reative o app (versão 1.0.3).
+  # tailscale:
+  #   image: tailscale/tailscale:latest
+  #   hostname: leiloes-painel
+  #   restart: unless-stopped
+  #   env_file: [${APP_DATA_DIR}/tailscale.env]
+  #   environment:
+  #     TS_STATE_DIR: /var/lib/tailscale
+  #     TS_SERVE_CONFIG: /config/serve.json
+  #     TS_USERSPACE: "false"
+  #     TS_AUTH_ONCE: "true"
+  #   volumes:
+  #     - ${APP_DATA_DIR}/ts-state:/var/lib/tailscale
+  #     - ${APP_DATA_DIR}/ts-serve.json:/config/serve.json:ro
+  #   devices: ["/dev/net/tun:/dev/net/tun"]
+  #   cap_add: [net_admin]
+  #   depends_on: [auth-proxy]
+
   # ── KOTN: lances ao vivo (websocket) ───────────────────────────────────
   kotn-collector:
     image: node:22-alpine

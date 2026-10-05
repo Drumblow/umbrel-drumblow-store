@@ -23,4 +23,18 @@ mkdir -p \
 chown -R 1000:1000 "$APP_DATA_DIR/src" "$APP_DATA_DIR/backups" 2>/dev/null || true
 chmod 700 "$APP_DATA_DIR/src" "$APP_DATA_DIR/backups" 2>/dev/null || true
 
+# ── Senha do porteiro (acesso externo) ─────────────────────────────────────
+# Fica FORA do repositório público. O painel continua aberto na LAN e na interface do
+# umbrelOS; esta senha vale só para o caminho público (Tailscale Funnel → função na Vercel).
+if [ ! -f "$APP_DATA_DIR/auth.env" ]; then
+  SENHA="$( (openssl rand -base64 24 2>/dev/null || head -c 24 /dev/urandom | base64) | tr -d '/+=' | cut -c1-28 )"
+  printf 'PAINEL_USUARIO=umbrel\nPAINEL_SENHA=%s\n' "$SENHA" > "$APP_DATA_DIR/auth.env"
+  chmod 600 "$APP_DATA_DIR/auth.env" 2>/dev/null || true
+  chown 1000:1000 "$APP_DATA_DIR/auth.env" 2>/dev/null || true
+  echo "[drumblow-leiloes] senha do porteiro criada em $APP_DATA_DIR/auth.env"
+  echo "[drumblow-leiloes] veja com: cat \"$APP_DATA_DIR/auth.env\""
+else
+  echo "[drumblow-leiloes] $APP_DATA_DIR/auth.env já existe — mantido"
+fi
+
 echo "[drumblow-leiloes] pastas preparadas em $APP_DATA_DIR/src (copie os projetos para lá)"
