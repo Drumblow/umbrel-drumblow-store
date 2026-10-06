@@ -64,10 +64,31 @@ services:
       AUTH_PORT: "8788"
       AUTH_DESTINO_HOST: "web"
       AUTH_DESTINO_PORTA: "8787"
+      AUTH_UPSTREAM: "http://auth:8791"
       PAINEL_AUTH_ARQUIVO: /segredos/auth.env
     volumes:
       - ${APP_DATA_DIR}/src/auction-dashboard:/projetos/auction-dashboard:ro
       - ${APP_DATA_DIR}/auth.env:/segredos/auth.env:ro
+    logging: *log-limits
+
+  # ── Contas (cadastro/login com código de 6 dígitos por e-mail) ─────────
+  # Rotas /auth/* e /api/auth/* passam pelo auth-proxy SEM o Basic do painel (têm limite próprio).
+  # O envio de e-mail usa o smtp.env (senha de app do Gmail — fora do repositório).
+  auth:
+    image: node:22-alpine
+    command: ["node", "--no-warnings", "src/server.js"]
+    working_dir: /app
+    user: "1000:1000"
+    restart: unless-stopped
+    stop_grace_period: 20s
+    env_file:
+      - ${APP_DATA_DIR}/smtp.env
+    environment:
+      AUTH_PORT: "8791"
+      AUTH_DB: /app/data/auth.db
+      AUTH_LOG_DIR: /app/logs
+    volumes:
+      - ${APP_DATA_DIR}/src/auth-service:/app
     logging: *log-limits
 
   # ── Tailscale: túnel de saída (Funnel) ────────────────────────────────
@@ -257,5 +278,6 @@ services:
       - ${APP_DATA_DIR}/src/mongers-tracker:/projetos/mongers-tracker:ro
       - ${APP_DATA_DIR}/src/mckenzies-tracker:/projetos/mckenzies-tracker:ro
       - ${APP_DATA_DIR}/src/product-values:/projetos/product-values:ro
+      - ${APP_DATA_DIR}/src/auth-service:/projetos/auth-service:ro
     logging: *log-limits
 

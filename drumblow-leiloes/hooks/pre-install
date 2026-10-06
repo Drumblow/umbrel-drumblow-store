@@ -25,7 +25,9 @@ mkdir -p \
   "$APP_DATA_DIR/src/mongers-tracker/data" \
   "$APP_DATA_DIR/src/mongers-tracker/logs" \
   "$APP_DATA_DIR/src/mckenzies-tracker/data" \
-  "$APP_DATA_DIR/src/mckenzies-tracker/logs"
+  "$APP_DATA_DIR/src/mckenzies-tracker/logs" \
+  "$APP_DATA_DIR/src/auth-service/data" \
+  "$APP_DATA_DIR/src/auth-service/logs"
 
 chown -R 1000:1000 "$APP_DATA_DIR/src" 2>/dev/null || true
 chmod 700 "$APP_DATA_DIR/src" 2>/dev/null || true
@@ -57,6 +59,14 @@ if [ ! -f "$APP_DATA_DIR/ts-serve.json" ]; then
   printf '{"TCP":{"443":{"HTTPS":true}},"Web":{"${TS_CERT_DOMAIN}:443":{"Handlers":{"/":{"Proxy":"http://auth-proxy:8788"}}},"AllowFunnel":{"${TS_CERT_DOMAIN}:443":true}}\n' > "$APP_DATA_DIR/ts-serve.json"
   chown 1000:1000 "$APP_DATA_DIR/ts-serve.json" 2>/dev/null || true
   echo "[drumblow-leiloes] ts-serve.json criado"
+fi
+
+# ── Contas: envio de e-mail (Gmail SMTP com senha de app) ──────────────────
+if [ ! -f "$APP_DATA_DIR/smtp.env" ]; then
+  printf '# Serviço de contas — envio de código por e-mail (Gmail SMTP).\n# 1) ative a Verificação em 2 etapas na conta Google\n# 2) crie uma Senha de app em myaccount.google.com/apppasswords\n# 3) cole a senha (16 caracteres, sem espaços) em SMTP_PASS e reinicie o serviço "auth"\nSMTP_HOST=smtp.gmail.com\nSMTP_PORT=465\nSMTP_USER=jhujhones.bkp@gmail.com\nSMTP_PASS=\nMAIL_FROM=Painel Leiloes <jhujhones.bkp@gmail.com>\nAUTH_PEPPER=troque-por-um-valor-aleatorio\n' > "$APP_DATA_DIR/smtp.env"
+  chmod 600 "$APP_DATA_DIR/smtp.env" 2>/dev/null || true
+  chown 1000:1000 "$APP_DATA_DIR/smtp.env" 2>/dev/null || true
+  echo "[drumblow-leiloes] modelo de smtp.env criado (preencha o SMTP_PASS com a senha de app do Gmail)"
 fi
 
 echo "[drumblow-leiloes] pastas preparadas em $APP_DATA_DIR/src (copie os projetos para lá)"
