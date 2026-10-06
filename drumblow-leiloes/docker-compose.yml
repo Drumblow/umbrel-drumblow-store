@@ -2,18 +2,31 @@ version: "3.7"
 
 # Leilões — Coletor e Painel
 #
-# O código-fonte (os quatro projetos) NÃO fica na imagem: ele é copiado depois da instalação para
-# ${APP_DATA_DIR}/src e montado em /projetos dentro de cada serviço. Assim o projeto não precisa
-# ser publicado em imagem/registry nenhum.
+# O código-fonte (as cinco casas + painel + valores) NÃO fica na imagem: ele é copiado depois da
+# instalação para ${APP_DATA_DIR}/src e montado em /projetos dentro de cada serviço. Assim o
+# projeto não precisa ser publicado em imagem/registry nenhum.
+#
+# Acesso a disco MÍNIMO por serviço: cada coletor enxerga só a própria pasta; valores e backup
+# leem os bancos em somente-leitura; o painel (web) monta tudo porque precisa ler os 6 bancos e
+# servir a própria página. Sem isso, um coletor comprometido poderia reescrever o painel inteiro.
+#
+# Logs com teto (json-file 10 MB × 3): sem isso os logs do Docker crescem sem limite no disco.
 #
 # Imagem base: node:22-alpine (oficial). A versão 22.13 do Node já traz o módulo node:sqlite sem
 # flag experimental — é o banco dos coletores.
+
+x-log: &log-limits
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
 
 services:
   app_proxy:
     environment:
       APP_HOST: drumblow-leiloes_web_1
       APP_PORT: 8787
+    logging: *log-limits
 
   # ── Painel (único serviço com porta exposta pelo umbrelOS) ─────────────
   web:
@@ -31,7 +44,10 @@ services:
       # painel e a porta do app nunca é publicada (foi o que travou a primeira instalação).
       HOST: "0.0.0.0"
     volumes:
+      # o painel lê os 6 bancos e serve a página; mantém RW porque a leitura de banco SQLite em
+      # modo WAL precisa dos arquivos -shm/-wal na mesma pasta durante reinícios dos coletores
       - ${APP_DATA_DIR}/src:/projetos
+    logging: *log-limits
 
   # ── Porteiro do acesso externo (Basic auth + limite de requisições) ────
   # Só existe por causa do caminho público: Tailscale Funnel → função na Vercel.
@@ -50,8 +66,9 @@ services:
       AUTH_DESTINO_PORTA: "8787"
       PAINEL_AUTH_ARQUIVO: /segredos/auth.env
     volumes:
-      - ${APP_DATA_DIR}/src:/projetos
+      - ${APP_DATA_DIR}/src/auction-dashboard:/projetos/auction-dashboard:ro
       - ${APP_DATA_DIR}/auth.env:/segredos/auth.env:ro
+    logging: *log-limits
 
   # ── Tailscale: túnel de saída (Funnel) ────────────────────────────────
   # Não publica porta nenhuma: o container disca para fora e o Funnel entrega
@@ -78,6 +95,7 @@ services:
       - net_admin
     depends_on:
       - auth-proxy
+    logging: *log-limits
 
   # ── KOTN: lances ao vivo (websocket) ───────────────────────────────────
   kotn-collector:
@@ -88,7 +106,8 @@ services:
     restart: unless-stopped
     stop_grace_period: 20s
     volumes:
-      - ${APP_DATA_DIR}/src:/projetos
+      - ${APP_DATA_DIR}/src/kotn-tracker:/projetos/kotn-tracker
+    logging: *log-limits
 
   # ── KOTN: catálogo + estado dos itens ──────────────────────────────────
   kotn-sweeper:
@@ -99,7 +118,8 @@ services:
     restart: unless-stopped
     stop_grace_period: 30s
     volumes:
-      - ${APP_DATA_DIR}/src:/projetos
+      - ${APP_DATA_DIR}/src/kotn-tracker:/projetos/kotn-tracker
+    logging: *log-limits
 
   # ── Encore/HiBid: lotes + fechamento ───────────────────────────────────
   encore-sweeper:
@@ -110,7 +130,8 @@ services:
     restart: unless-stopped
     stop_grace_period: 30s
     volumes:
-      - ${APP_DATA_DIR}/src:/projetos
+      - ${APP_DATA_DIR}/src/encore-tracker:/projetos/encore-tracker
+    logging: *log-limits
 
   # ── Encore/HiBid: históricos de lances (fila própria) ──────────────────
   encore-historian:
@@ -121,7 +142,8 @@ services:
     restart: unless-stopped
     stop_grace_period: 30s
     volumes:
-      - ${APP_DATA_DIR}/src:/projetos
+      - ${APP_DATA_DIR}/src/encore-tracker:/projetos/encore-tracker
+    logging: *log-limits
 
   # ── Liquidation Max/HiBid: lotes + fechamento ──────────────────────────
   lmax-sweeper:
@@ -132,7 +154,8 @@ services:
     restart: unless-stopped
     stop_grace_period: 30s
     volumes:
-      - ${APP_DATA_DIR}/src:/projetos
+      - ${APP_DATA_DIR}/src/lmax-tracker:/projetos/lmax-tracker
+    logging: *log-limits
 
   # ── Liquidation Max/HiBid: históricos de lances (fila própria) ─────────
   lmax-historian:
@@ -143,7 +166,8 @@ services:
     restart: unless-stopped
     stop_grace_period: 30s
     volumes:
-      - ${APP_DATA_DIR}/src:/projetos
+      - ${APP_DATA_DIR}/src/lmax-tracker:/projetos/lmax-tracker
+    logging: *log-limits
 
   # ── Auction Mongers/HiBid: lotes + fechamento ──────────────────────────
   mongers-sweeper:
@@ -154,7 +178,8 @@ services:
     restart: unless-stopped
     stop_grace_period: 30s
     volumes:
-      - ${APP_DATA_DIR}/src:/projetos
+      - ${APP_DATA_DIR}/src/mongers-tracker:/projetos/mongers-tracker
+    logging: *log-limits
 
   # ── Auction Mongers/HiBid: históricos de lances (fila própria) ─────────
   mongers-historian:
@@ -165,7 +190,8 @@ services:
     restart: unless-stopped
     stop_grace_period: 30s
     volumes:
-      - ${APP_DATA_DIR}/src:/projetos
+      - ${APP_DATA_DIR}/src/mongers-tracker:/projetos/mongers-tracker
+    logging: *log-limits
 
   # ── McKenzie's/HiBid: lotes + fechamento ───────────────────────────────
   mckenzies-sweeper:
@@ -176,7 +202,8 @@ services:
     restart: unless-stopped
     stop_grace_period: 30s
     volumes:
-      - ${APP_DATA_DIR}/src:/projetos
+      - ${APP_DATA_DIR}/src/mckenzies-tracker:/projetos/mckenzies-tracker
+    logging: *log-limits
 
   # ── McKenzie's/HiBid: históricos de lances (fila própria) ──────────────
   mckenzies-historian:
@@ -187,9 +214,11 @@ services:
     restart: unless-stopped
     stop_grace_period: 30s
     volumes:
-      - ${APP_DATA_DIR}/src:/projetos
+      - ${APP_DATA_DIR}/src/mckenzies-tracker:/projetos/mckenzies-tracker
+    logging: *log-limits
 
   # ── Valor de mercado (comps internos por condição + Amazon.ca) ─────────
+  # Lê os 5 bancos em somente-leitura; grava só na própria pasta (values.db + logs).
   valores:
     image: node:22-alpine
     command: ["node", "--no-warnings", "src/worker.js", "--loop"]
@@ -198,9 +227,16 @@ services:
     restart: unless-stopped
     stop_grace_period: 30s
     volumes:
-      - ${APP_DATA_DIR}/src:/projetos
+      - ${APP_DATA_DIR}/src/product-values:/projetos/product-values
+      - ${APP_DATA_DIR}/src/kotn-tracker:/projetos/kotn-tracker:ro
+      - ${APP_DATA_DIR}/src/encore-tracker:/projetos/encore-tracker:ro
+      - ${APP_DATA_DIR}/src/lmax-tracker:/projetos/lmax-tracker:ro
+      - ${APP_DATA_DIR}/src/mongers-tracker:/projetos/mongers-tracker:ro
+      - ${APP_DATA_DIR}/src/mckenzies-tracker:/projetos/mckenzies-tracker:ro
+    logging: *log-limits
 
   # ── Backup consistente dos bancos (VACUUM INTO, a cada 6 h, 7 cópias) ──
+  # Lê todos os bancos; grava somente em backups/ e logs/ (fora esses, só leitura).
   backup:
     image: node:22-alpine
     command: ["node", "--no-warnings", "src/backup.js"]
@@ -212,4 +248,14 @@ services:
       BACKUP_INTERVALO_HORAS: "6"
       BACKUP_MANTER: "7"
     volumes:
-      - ${APP_DATA_DIR}/src:/projetos
+      - ${APP_DATA_DIR}/src/auction-dashboard:/projetos/auction-dashboard:ro
+      - ${APP_DATA_DIR}/src/auction-dashboard/backups:/projetos/auction-dashboard/backups
+      - ${APP_DATA_DIR}/src/auction-dashboard/logs:/projetos/auction-dashboard/logs
+      - ${APP_DATA_DIR}/src/kotn-tracker:/projetos/kotn-tracker:ro
+      - ${APP_DATA_DIR}/src/encore-tracker:/projetos/encore-tracker:ro
+      - ${APP_DATA_DIR}/src/lmax-tracker:/projetos/lmax-tracker:ro
+      - ${APP_DATA_DIR}/src/mongers-tracker:/projetos/mongers-tracker:ro
+      - ${APP_DATA_DIR}/src/mckenzies-tracker:/projetos/mckenzies-tracker:ro
+      - ${APP_DATA_DIR}/src/product-values:/projetos/product-values:ro
+    logging: *log-limits
+

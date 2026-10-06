@@ -19,7 +19,7 @@ App Store → ⋯ (canto superior direito) → **Community App Stores** → cole
 ### drumblow-leiloes
 
 Ao contrário dos outros apps, **não usa imagem própria**: roda na imagem oficial `node:22-alpine`
-e o código dos quatro projetos é copiado depois da instalação para
+e o código (5 casas + painel + valores) é copiado depois da instalação para
 `~/umbrel/app-data/drumblow-leiloes/src` (montado em `/projetos` dentro dos containers). Assim nada
 do projeto precisa ser publicado em registry. Enquanto o código não estiver lá, os containers
 reiniciarão em laço — o gancho `hooks/pre-install` já deixa as pastas prontas.
@@ -27,7 +27,8 @@ reiniciarão em laço — o gancho `hooks/pre-install` já deixa as pastas pront
 Depois de instalar, no PC que tem o código:
 
 ```bash
-cd Projetos/auction-dashboard && bash deploy/publicar.sh
+cd Projetos/auction-dashboard && bash deploy/publicar.sh          # código
+cd Projetos/auction-dashboard && bash deploy/publicar.sh --dados  # + semeia os 6 bancos
 ```
 
 Os bancos ficam em `.../src/<projeto>/data/`, ficam fora do backup do umbrelOS (arquivo vivo) e o
