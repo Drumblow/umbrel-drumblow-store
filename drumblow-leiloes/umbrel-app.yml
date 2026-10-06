@@ -4,7 +4,7 @@ category: files
 name: Leilões — Coletor e Painel
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-leiloes/icon.svg
-version: "1.1.0"
+version: "1.2.0"
 tagline: Coleta os leilões de Barrie e do HiBid, guarda lances e mostra o valor de mercado
 description: >-
   Coletor e painel dos leilões que você acompanha (King of the North e Encore Auctions/HiBid).
@@ -41,11 +41,20 @@ backupIgnore:
   - src/lmax-tracker/data/lmax.db
   - src/lmax-tracker/data/lmax.db-wal
   - src/lmax-tracker/data/lmax.db-shm
+  - src/mongers-tracker/data/mongers.db
+  - src/mongers-tracker/data/mongers.db-wal
+  - src/mongers-tracker/data/mongers.db-shm
   - src/product-values/data/values.db
   - src/product-values/data/values.db-wal
   - src/product-values/data/values.db-shm
   - backups/*.db
 releaseNotes: >-
+  1.2.0: quarta casa no serviço — Auction Mongers (HiBid), com três leilões por semana (quarta
+  20h, sexta 20h e domingo 18h), cerca de 5–6 mil lotes por semana, retirada em Richmond Hill
+  (GTA) e envio pelo Canadá. Dois serviços novos (lotes + históricos); painel e valores somam a
+  quarta fonte. Taxas do leilão ainda provisórias no painel (a confirmar com o leiloeiro).
+
+
   1.1.0: nova casa no serviço — Liquidation Max Inc (HiBid), com três leilões por semana (quinta,
   domingo e a "50¢" de segunda), cerca de 11–14 mil lotes por semana, retirada em
   London/Chatham/Windsor/Mississauga. Dois serviços novos (lotes + históricos de lances); painel e

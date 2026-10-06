@@ -145,6 +145,28 @@ services:
     volumes:
       - ${APP_DATA_DIR}/src:/projetos
 
+  # ── Auction Mongers/HiBid: lotes + fechamento ──────────────────────────
+  mongers-sweeper:
+    image: node:22-alpine
+    command: ["node", "--no-warnings", "src/sweeper.js"]
+    working_dir: /projetos/mongers-tracker
+    user: "1000:1000"
+    restart: unless-stopped
+    stop_grace_period: 30s
+    volumes:
+      - ${APP_DATA_DIR}/src:/projetos
+
+  # ── Auction Mongers/HiBid: históricos de lances (fila própria) ─────────
+  mongers-historian:
+    image: node:22-alpine
+    command: ["node", "--no-warnings", "src/historian.js"]
+    working_dir: /projetos/mongers-tracker
+    user: "1000:1000"
+    restart: unless-stopped
+    stop_grace_period: 30s
+    volumes:
+      - ${APP_DATA_DIR}/src:/projetos
+
   # ── Valor de mercado (comps internos por condição + Amazon.ca) ─────────
   valores:
     image: node:22-alpine
