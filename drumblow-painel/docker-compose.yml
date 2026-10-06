@@ -11,7 +11,7 @@ services:
     image: ghcr.io/drumblow/painel-escritorio:0.3.15@sha256:df8aeb34a0ef6c6a6afb5959b037942255128b73bb530b99812928f004923087
     command: ["servir"]
     user: "1000:1000"
-    restart: on-failure
+    restart: unless-stopped
     stop_grace_period: 30s
     volumes:
       # Pastas preparadas pelo hooks/pre-install (dono 1000:1000; configuração genérica criada uma vez).

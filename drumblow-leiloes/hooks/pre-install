@@ -18,6 +18,7 @@ mkdir -p \
   "$APP_DATA_DIR/src/product-values/data" \
   "$APP_DATA_DIR/src/product-values/logs" \
   "$APP_DATA_DIR/src/auction-dashboard/logs" \
+  "$APP_DATA_DIR/src/auction-dashboard/data" \
   "$APP_DATA_DIR/src/auction-dashboard/backups" \
   "$APP_DATA_DIR/src/lmax-tracker/data" \
   "$APP_DATA_DIR/src/lmax-tracker/logs" \
