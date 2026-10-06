@@ -43,4 +43,19 @@ else
   echo "[drumblow-leiloes] $APP_DATA_DIR/auth.env já existe — mantido"
 fi
 
+# ── Tailscale (acesso externo sem abrir portas) ────────────────────────────
+# O serviço tailscale precisa de tailscale.env (auth key com tag:leiloes) e do ts-serve.json.
+# Criamos MODELOS para o compose não travar na primeira instalação; a chave em si é sua.
+if [ ! -f "$APP_DATA_DIR/tailscale.env" ]; then
+  printf '# preencha com a auth key do Tailscale (tag:leiloes) para o Funil externo\n# TS_AUTHKEY=tskey-auth-...\nTS_AUTHKEY=\n' > "$APP_DATA_DIR/tailscale.env"
+  chmod 600 "$APP_DATA_DIR/tailscale.env" 2>/dev/null || true
+  chown 1000:1000 "$APP_DATA_DIR/tailscale.env" 2>/dev/null || true
+  echo "[drumblow-leiloes] modelo de tailscale.env criado (preencha o TS_AUTHKEY)"
+fi
+if [ ! -f "$APP_DATA_DIR/ts-serve.json" ]; then
+  printf '{"TCP":{"443":{"HTTPS":true}},"Web":{"${TS_CERT_DOMAIN}:443":{"Handlers":{"/":{"Proxy":"http://auth-proxy:8788"}}},"AllowFunnel":{"${TS_CERT_DOMAIN}:443":true}}\n' > "$APP_DATA_DIR/ts-serve.json"
+  chown 1000:1000 "$APP_DATA_DIR/ts-serve.json" 2>/dev/null || true
+  echo "[drumblow-leiloes] ts-serve.json criado"
+fi
+
 echo "[drumblow-leiloes] pastas preparadas em $APP_DATA_DIR/src (copie os projetos para lá)"
