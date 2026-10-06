@@ -167,6 +167,28 @@ services:
     volumes:
       - ${APP_DATA_DIR}/src:/projetos
 
+  # ── McKenzie's/HiBid: lotes + fechamento ───────────────────────────────
+  mckenzies-sweeper:
+    image: node:22-alpine
+    command: ["node", "--no-warnings", "src/sweeper.js"]
+    working_dir: /projetos/mckenzies-tracker
+    user: "1000:1000"
+    restart: unless-stopped
+    stop_grace_period: 30s
+    volumes:
+      - ${APP_DATA_DIR}/src:/projetos
+
+  # ── McKenzie's/HiBid: históricos de lances (fila própria) ──────────────
+  mckenzies-historian:
+    image: node:22-alpine
+    command: ["node", "--no-warnings", "src/historian.js"]
+    working_dir: /projetos/mckenzies-tracker
+    user: "1000:1000"
+    restart: unless-stopped
+    stop_grace_period: 30s
+    volumes:
+      - ${APP_DATA_DIR}/src:/projetos
+
   # ── Valor de mercado (comps internos por condição + Amazon.ca) ─────────
   valores:
     image: node:22-alpine

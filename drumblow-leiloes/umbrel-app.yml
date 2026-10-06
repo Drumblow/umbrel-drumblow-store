@@ -4,7 +4,7 @@ category: files
 name: Leilões — Coletor e Painel
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-leiloes/icon.svg
-version: "1.2.0"
+version: "1.3.0"
 tagline: Coleta os leilões de Barrie e do HiBid, guarda lances e mostra o valor de mercado
 description: >-
   Coletor e painel dos leilões que você acompanha (King of the North e Encore Auctions/HiBid).
@@ -44,11 +44,21 @@ backupIgnore:
   - src/mongers-tracker/data/mongers.db
   - src/mongers-tracker/data/mongers.db-wal
   - src/mongers-tracker/data/mongers.db-shm
+  - src/mckenzies-tracker/data/mckenzies.db
+  - src/mckenzies-tracker/data/mckenzies.db-wal
+  - src/mckenzies-tracker/data/mckenzies.db-shm
   - src/product-values/data/values.db
   - src/product-values/data/values.db-wal
   - src/product-values/data/values.db-shm
   - backups/*.db
 releaseNotes: >-
+  1.3.0: quinta casa no serviço — McKenzie's Associated Auctioneers (HiBid), a ~1h de Sarnia, em
+  London. Dois leilões de returns por semana (quarta e domingo ~18h) + leilões paralelos (veículos,
+  estates), ~5–6 mil lotes/semana e 2.394 arquivados para backfill. Taxas dos returns confirmadas no
+  aviso deles: 17% de prêmio + HST e $1,50 de manuseio por item (taxa de cartão não mencionada —
+  provisória em 0). Dois serviços novos (lotes + históricos); painel e valores somam a quinta fonte.
+
+
   1.2.0: quarta casa no serviço — Auction Mongers (HiBid), com três leilões por semana (quarta
   20h, sexta 20h e domingo 18h), cerca de 5–6 mil lotes por semana, retirada em Richmond Hill
   (GTA) e envio pelo Canadá. Dois serviços novos (lotes + históricos); painel e valores somam a
