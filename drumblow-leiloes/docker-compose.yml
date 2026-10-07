@@ -89,6 +89,7 @@ services:
       AUTH_LOG_DIR: /app/logs
     volumes:
       - ${APP_DATA_DIR}/src/auth-service:/app
+      - ${APP_DATA_DIR}/smtp.env:/app/smtp.env:ro
     logging: *log-limits
 
   # ── Tailscale: túnel de saída (Funnel) ────────────────────────────────
