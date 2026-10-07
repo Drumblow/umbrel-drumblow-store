@@ -4,7 +4,7 @@ category: files
 name: Leilões — Coletor e Painel
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-leiloes/icon.svg
-version: "1.5.3"
+version: "1.5.4"
 tagline: Coleta 5 casas de leilão (KOTN + HiBid), guarda os lances e mostra o valor de mercado
 description: >-
   Coletor e painel dos leilões que você acompanha (King of the North, Encore Auctions, Liquidation
@@ -68,6 +68,13 @@ backupIgnore:
   - ts-state
   - ts-state/*
 releaseNotes: >-
+  1.5.4: isolamento fino de permissões (A20 da auditoria v2) — o código de cada projeto é montado
+  SOMENTE-LEITURA nos containers e a escrita fica restrita às pastas de dados e logs de cada
+  serviço (bancos + sidecars do WAL, .pid e saída de log). Antes, o painel enxergava o src/ inteiro
+  com escrita e um serviço comprometido poderia reescrever o código que os outros executam. Sem
+  mudança de comportamento visível — só permissões.
+
+
   1.5.3: correções P1 da auditoria v2 — coletores (carimbo de varredura só com varredura completa,
   fatal de 4xx sem retry, revision sem wipe, OCR sem chaves não condena a fila); serviço de contas
   (pepper gerado e fail-closed, cooldown único com chave canônica do Gmail, scrypt assíncrono,

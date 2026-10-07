@@ -6,9 +6,11 @@ version: "3.7"
 # instalação para ${APP_DATA_DIR}/src e montado em /projetos dentro de cada serviço. Assim o
 # projeto não precisa ser publicado em imagem/registry nenhum.
 #
-# Acesso a disco MÍNIMO por serviço: cada coletor enxerga só a própria pasta; valores e backup
-# leem os bancos em somente-leitura; o painel (web) monta tudo porque precisa ler os 6 bancos e
-# servir a própria página. Sem isso, um coletor comprometido poderia reescrever o painel inteiro.
+# Acesso a disco MÍNIMO por serviço (A20): o CÓDIGO de cada projeto é montado SOMENTE-LEITURA e a
+# escrita fica restrita às pastas de dados e logs de cada serviço (banco SQLite + sidecars do WAL,
+# .pid e saída de log). O painel (web) lê os 7 projetos e escreve apenas no próprio data/ e logs/;
+# valores e backup leem os bancos em somente-leitura. Sem isso, um serviço comprometido poderia
+# reescrever o código que os outros executam (o web enxergava o src/ inteiro com escrita).
 #
 # Logs com teto (json-file 10 MB × 3): sem isso os logs do Docker crescem sem limite no disco.
 #
@@ -44,9 +46,19 @@ services:
       # painel e a porta do app nunca é publicada (foi o que travou a primeira instalação).
       HOST: "0.0.0.0"
     volumes:
-      # o painel lê os 6 bancos e serve a página; mantém RW porque a leitura de banco SQLite em
-      # modo WAL precisa dos arquivos -shm/-wal na mesma pasta durante reinícios dos coletores
-      - ${APP_DATA_DIR}/src:/projetos
+      # código :ro; escrita só no próprio data/ (pid do painel) e logs/. Os demais projetos são
+      # lidos em :ro (a leitura de banco SQLite em WAL funciona com os sidecars criados pelos
+      # donos dos bancos — mesmo padrão que valores e backup já usam em produção).
+      - ${APP_DATA_DIR}/src/auction-dashboard:/projetos/auction-dashboard:ro
+      - ${APP_DATA_DIR}/src/auction-dashboard/data:/projetos/auction-dashboard/data
+      - ${APP_DATA_DIR}/src/auction-dashboard/logs:/projetos/auction-dashboard/logs
+      - ${APP_DATA_DIR}/src/kotn-tracker:/projetos/kotn-tracker:ro
+      - ${APP_DATA_DIR}/src/encore-tracker:/projetos/encore-tracker:ro
+      - ${APP_DATA_DIR}/src/lmax-tracker:/projetos/lmax-tracker:ro
+      - ${APP_DATA_DIR}/src/mongers-tracker:/projetos/mongers-tracker:ro
+      - ${APP_DATA_DIR}/src/mckenzies-tracker:/projetos/mckenzies-tracker:ro
+      - ${APP_DATA_DIR}/src/product-values:/projetos/product-values:ro
+      - ${APP_DATA_DIR}/src/auth-service:/projetos/auth-service:ro
     logging: *log-limits
 
   # ── Porteiro do acesso externo (Basic auth + limite de requisições) ────
@@ -86,7 +98,10 @@ services:
       AUTH_DB: /app/data/auth.db
       AUTH_LOG_DIR: /app/logs
     volumes:
-      - ${APP_DATA_DIR}/src/auth-service:/app
+      # código :ro; escrita só no banco (data/) e nos logs
+      - ${APP_DATA_DIR}/src/auth-service:/app:ro
+      - ${APP_DATA_DIR}/src/auth-service/data:/app/data
+      - ${APP_DATA_DIR}/src/auth-service/logs:/app/logs
       - ${APP_DATA_DIR}/smtp.env:/app/smtp.env:ro
     logging: *log-limits
 
@@ -126,7 +141,9 @@ services:
     restart: unless-stopped
     stop_grace_period: 20s
     volumes:
-      - ${APP_DATA_DIR}/src/kotn-tracker:/projetos/kotn-tracker
+      - ${APP_DATA_DIR}/src/kotn-tracker:/projetos/kotn-tracker:ro
+      - ${APP_DATA_DIR}/src/kotn-tracker/data:/projetos/kotn-tracker/data
+      - ${APP_DATA_DIR}/src/kotn-tracker/logs:/projetos/kotn-tracker/logs
     logging: *log-limits
 
   # ── KOTN: catálogo + estado dos itens ──────────────────────────────────
@@ -138,7 +155,9 @@ services:
     restart: unless-stopped
     stop_grace_period: 30s
     volumes:
-      - ${APP_DATA_DIR}/src/kotn-tracker:/projetos/kotn-tracker
+      - ${APP_DATA_DIR}/src/kotn-tracker:/projetos/kotn-tracker:ro
+      - ${APP_DATA_DIR}/src/kotn-tracker/data:/projetos/kotn-tracker/data
+      - ${APP_DATA_DIR}/src/kotn-tracker/logs:/projetos/kotn-tracker/logs
     logging: *log-limits
 
   # ── Encore/HiBid: lotes + fechamento ───────────────────────────────────
@@ -150,7 +169,9 @@ services:
     restart: unless-stopped
     stop_grace_period: 30s
     volumes:
-      - ${APP_DATA_DIR}/src/encore-tracker:/projetos/encore-tracker
+      - ${APP_DATA_DIR}/src/encore-tracker:/projetos/encore-tracker:ro
+      - ${APP_DATA_DIR}/src/encore-tracker/data:/projetos/encore-tracker/data
+      - ${APP_DATA_DIR}/src/encore-tracker/logs:/projetos/encore-tracker/logs
     logging: *log-limits
 
   # ── Encore/HiBid: históricos de lances (fila própria) ──────────────────
@@ -162,7 +183,9 @@ services:
     restart: unless-stopped
     stop_grace_period: 30s
     volumes:
-      - ${APP_DATA_DIR}/src/encore-tracker:/projetos/encore-tracker
+      - ${APP_DATA_DIR}/src/encore-tracker:/projetos/encore-tracker:ro
+      - ${APP_DATA_DIR}/src/encore-tracker/data:/projetos/encore-tracker/data
+      - ${APP_DATA_DIR}/src/encore-tracker/logs:/projetos/encore-tracker/logs
     logging: *log-limits
 
   # ── Liquidation Max/HiBid: lotes + fechamento ──────────────────────────
@@ -174,7 +197,9 @@ services:
     restart: unless-stopped
     stop_grace_period: 30s
     volumes:
-      - ${APP_DATA_DIR}/src/lmax-tracker:/projetos/lmax-tracker
+      - ${APP_DATA_DIR}/src/lmax-tracker:/projetos/lmax-tracker:ro
+      - ${APP_DATA_DIR}/src/lmax-tracker/data:/projetos/lmax-tracker/data
+      - ${APP_DATA_DIR}/src/lmax-tracker/logs:/projetos/lmax-tracker/logs
     logging: *log-limits
 
   # ── Liquidation Max/HiBid: históricos de lances (fila própria) ─────────
@@ -186,7 +211,9 @@ services:
     restart: unless-stopped
     stop_grace_period: 30s
     volumes:
-      - ${APP_DATA_DIR}/src/lmax-tracker:/projetos/lmax-tracker
+      - ${APP_DATA_DIR}/src/lmax-tracker:/projetos/lmax-tracker:ro
+      - ${APP_DATA_DIR}/src/lmax-tracker/data:/projetos/lmax-tracker/data
+      - ${APP_DATA_DIR}/src/lmax-tracker/logs:/projetos/lmax-tracker/logs
     logging: *log-limits
 
   # ── Auction Mongers/HiBid: lotes + fechamento ──────────────────────────
@@ -198,7 +225,9 @@ services:
     restart: unless-stopped
     stop_grace_period: 30s
     volumes:
-      - ${APP_DATA_DIR}/src/mongers-tracker:/projetos/mongers-tracker
+      - ${APP_DATA_DIR}/src/mongers-tracker:/projetos/mongers-tracker:ro
+      - ${APP_DATA_DIR}/src/mongers-tracker/data:/projetos/mongers-tracker/data
+      - ${APP_DATA_DIR}/src/mongers-tracker/logs:/projetos/mongers-tracker/logs
     logging: *log-limits
 
   # ── Auction Mongers/HiBid: históricos de lances (fila própria) ─────────
@@ -210,7 +239,9 @@ services:
     restart: unless-stopped
     stop_grace_period: 30s
     volumes:
-      - ${APP_DATA_DIR}/src/mongers-tracker:/projetos/mongers-tracker
+      - ${APP_DATA_DIR}/src/mongers-tracker:/projetos/mongers-tracker:ro
+      - ${APP_DATA_DIR}/src/mongers-tracker/data:/projetos/mongers-tracker/data
+      - ${APP_DATA_DIR}/src/mongers-tracker/logs:/projetos/mongers-tracker/logs
     logging: *log-limits
 
   # ── McKenzie's/HiBid: lotes + fechamento ───────────────────────────────
@@ -222,7 +253,9 @@ services:
     restart: unless-stopped
     stop_grace_period: 30s
     volumes:
-      - ${APP_DATA_DIR}/src/mckenzies-tracker:/projetos/mckenzies-tracker
+      - ${APP_DATA_DIR}/src/mckenzies-tracker:/projetos/mckenzies-tracker:ro
+      - ${APP_DATA_DIR}/src/mckenzies-tracker/data:/projetos/mckenzies-tracker/data
+      - ${APP_DATA_DIR}/src/mckenzies-tracker/logs:/projetos/mckenzies-tracker/logs
     logging: *log-limits
 
   # ── McKenzie's/HiBid: históricos de lances (fila própria) ──────────────
@@ -234,7 +267,9 @@ services:
     restart: unless-stopped
     stop_grace_period: 30s
     volumes:
-      - ${APP_DATA_DIR}/src/mckenzies-tracker:/projetos/mckenzies-tracker
+      - ${APP_DATA_DIR}/src/mckenzies-tracker:/projetos/mckenzies-tracker:ro
+      - ${APP_DATA_DIR}/src/mckenzies-tracker/data:/projetos/mckenzies-tracker/data
+      - ${APP_DATA_DIR}/src/mckenzies-tracker/logs:/projetos/mckenzies-tracker/logs
     logging: *log-limits
 
   # ── Valor de mercado (comps internos por condição + Amazon.ca) ─────────
@@ -247,7 +282,9 @@ services:
     restart: unless-stopped
     stop_grace_period: 30s
     volumes:
-      - ${APP_DATA_DIR}/src/product-values:/projetos/product-values
+      - ${APP_DATA_DIR}/src/product-values:/projetos/product-values:ro
+      - ${APP_DATA_DIR}/src/product-values/data:/projetos/product-values/data
+      - ${APP_DATA_DIR}/src/product-values/logs:/projetos/product-values/logs
       - ${APP_DATA_DIR}/src/kotn-tracker:/projetos/kotn-tracker:ro
       - ${APP_DATA_DIR}/src/encore-tracker:/projetos/encore-tracker:ro
       - ${APP_DATA_DIR}/src/lmax-tracker:/projetos/lmax-tracker:ro
@@ -279,4 +316,3 @@ services:
       - ${APP_DATA_DIR}/src/product-values:/projetos/product-values:ro
       - ${APP_DATA_DIR}/src/auth-service:/projetos/auth-service:ro
     logging: *log-limits
-

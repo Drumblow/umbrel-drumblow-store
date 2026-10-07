@@ -22,7 +22,8 @@ Ao contrário dos outros apps, **não usa imagem própria**: roda na imagem ofic
 e o código (5 casas + painel + valores) é copiado depois da instalação para
 `~/umbrel/app-data/drumblow-leiloes/src` (montado em `/projetos` dentro dos containers). Assim nada
 do projeto precisa ser publicado em registry. Enquanto o código não estiver lá, os containers
-reiniciarão em laço — o gancho `hooks/pre-install` já deixa as pastas prontas.
+reiniciarão em laço — o gancho `hooks/pre-install` já deixa as pastas prontas. Os containers montam
+o código SOMENTE-LEITURA e escrevem apenas em `data/` e `logs/` de cada projeto (1.5.4).
 
 Depois de instalar, no PC que tem o código:
 
