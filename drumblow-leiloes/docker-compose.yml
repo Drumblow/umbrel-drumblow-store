@@ -14,6 +14,11 @@ version: "3.7"
 #
 # Logs com teto (json-file 10 MB × 3): sem isso os logs do Docker crescem sem limite no disco.
 #
+# 1.5.5 (lote 2 da auditoria v3): imagens fixadas por DIGEST (node:22-alpine e tailscale:latest —
+# roda exatamente o que foi auditado, mesmo que a tag mude), healthcheck nos quatro serviços
+# críticos (web/porteiro/auth/tailscale) e limite de CPU/memória por serviço — sem teto, um
+# serviço com vazamento derrubava a casa inteira.
+#
 # Imagem base: node:22-alpine (oficial). A versão 22.13 do Node já traz o módulo node:sqlite sem
 # flag experimental — é o banco dos coletores.
 
@@ -22,6 +27,24 @@ x-log: &log-limits
   options:
     max-size: "10m"
     max-file: "3"
+
+x-lim-medio: &lim-medio
+  resources:
+    limits:
+      cpus: "1"
+      memory: 512M
+
+x-lim-leve: &lim-leve
+  resources:
+    limits:
+      cpus: "1"
+      memory: 256M
+
+x-lim-minimo: &lim-minimo
+  resources:
+    limits:
+      cpus: "0.5"
+      memory: 128M
 
 services:
   app_proxy:
@@ -32,7 +55,7 @@ services:
 
   # ── Painel (único serviço com porta exposta pelo umbrelOS) ─────────────
   web:
-    image: node:22-alpine
+    image: node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
     command: ["node", "--no-warnings", "server.js"]
     working_dir: /projetos/auction-dashboard
     user: "1000:1000"
@@ -59,14 +82,21 @@ services:
       - ${APP_DATA_DIR}/src/mckenzies-tracker:/projetos/mckenzies-tracker:ro
       - ${APP_DATA_DIR}/src/product-values:/projetos/product-values:ro
       - ${APP_DATA_DIR}/src/auth-service:/projetos/auth-service:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8787/ || exit 1"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy: *lim-medio
     logging: *log-limits
 
-  # ── Porteiro do acesso externo (Basic auth + limite de requisições) ────
+  # ── Porteiro do acesso externo (limite de requisições + contas) ────────
   # Só existe por causa do caminho público: Tailscale Funnel → função na Vercel.
   # O acesso pela LAN e pela interface do umbrelOS continua direto no painel (web),
-  # sem senha extra. Sem o arquivo de senha o serviço não sobe (proteção).
+  # sem senha extra. Sem o arquivo de segredos o serviço não sobe (proteção).
   auth-proxy:
-    image: node:22-alpine
+    image: node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
     command: ["node", "--no-warnings", "auth-proxy.js"]
     working_dir: /projetos/auction-dashboard
     user: "1000:1000"
@@ -81,13 +111,20 @@ services:
     volumes:
       - ${APP_DATA_DIR}/src/auction-dashboard:/projetos/auction-dashboard:ro
       - ${APP_DATA_DIR}/auth.env:/segredos/auth.env:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null 'http://127.0.0.1:8788/api/auth?acao=health' || exit 1"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy: *lim-minimo
     logging: *log-limits
 
   # ── Contas (cadastro/login com código de 6 dígitos por e-mail) ─────────
   # Rotas /auth/* e /api/auth/* passam pelo auth-proxy SEM o Basic do painel (têm limite próprio).
   # O envio de e-mail usa o smtp.env (senha de app do Gmail — fora do repositório).
   auth:
-    image: node:22-alpine
+    image: node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
     command: ["node", "--no-warnings", "src/server.js"]
     working_dir: /app
     user: "1000:1000"
@@ -103,14 +140,21 @@ services:
       - ${APP_DATA_DIR}/src/auth-service/data:/app/data
       - ${APP_DATA_DIR}/src/auth-service/logs:/app/logs
       - ${APP_DATA_DIR}/smtp.env:/app/smtp.env:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8791/health || exit 1"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy: *lim-leve
     logging: *log-limits
 
   # ── Tailscale: túnel de saída (Funnel) ────────────────────────────────
   # Não publica porta nenhuma: o container disca para fora e o Funnel entrega
-  # https://leiloes-painel.<tailnet>.ts.net → auth-proxy (8788, com senha) → painel.
-  # Além disso serve, só dentro do tailnet, a porta 8443 direto no painel (sem senha).
+  # https://leiloes-painel.<tailnet>.ts.net → auth-proxy (8788) → painel.
+  # Além disso serve, só dentro do tailnet, a porta 8443 direto no painel.
   tailscale:
-    image: tailscale/tailscale:latest
+    image: tailscale/tailscale:latest@sha256:c507f3a2a6ab1cabd8d809b98edeb41edbd5c3fb6ad9632ffd098b4c7d0b4065
     hostname: leiloes-painel
     restart: unless-stopped
     env_file:
@@ -130,11 +174,18 @@ services:
       - net_admin
     depends_on:
       - auth-proxy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:9002/healthz || exit 1"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy: *lim-leve
     logging: *log-limits
 
   # ── KOTN: lances ao vivo (websocket) ───────────────────────────────────
   kotn-collector:
-    image: node:22-alpine
+    image: node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
     command: ["node", "--no-warnings", "src/collector.js"]
     working_dir: /projetos/kotn-tracker
     user: "1000:1000"
@@ -144,11 +195,12 @@ services:
       - ${APP_DATA_DIR}/src/kotn-tracker:/projetos/kotn-tracker:ro
       - ${APP_DATA_DIR}/src/kotn-tracker/data:/projetos/kotn-tracker/data
       - ${APP_DATA_DIR}/src/kotn-tracker/logs:/projetos/kotn-tracker/logs
+    deploy: *lim-leve
     logging: *log-limits
 
   # ── KOTN: catálogo + estado dos itens ──────────────────────────────────
   kotn-sweeper:
-    image: node:22-alpine
+    image: node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
     command: ["node", "--no-warnings", "src/sweeper.js"]
     working_dir: /projetos/kotn-tracker
     user: "1000:1000"
@@ -158,11 +210,12 @@ services:
       - ${APP_DATA_DIR}/src/kotn-tracker:/projetos/kotn-tracker:ro
       - ${APP_DATA_DIR}/src/kotn-tracker/data:/projetos/kotn-tracker/data
       - ${APP_DATA_DIR}/src/kotn-tracker/logs:/projetos/kotn-tracker/logs
+    deploy: *lim-medio
     logging: *log-limits
 
   # ── Encore/HiBid: lotes + fechamento ───────────────────────────────────
   encore-sweeper:
-    image: node:22-alpine
+    image: node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
     command: ["node", "--no-warnings", "src/sweeper.js"]
     working_dir: /projetos/encore-tracker
     user: "1000:1000"
@@ -172,11 +225,12 @@ services:
       - ${APP_DATA_DIR}/src/encore-tracker:/projetos/encore-tracker:ro
       - ${APP_DATA_DIR}/src/encore-tracker/data:/projetos/encore-tracker/data
       - ${APP_DATA_DIR}/src/encore-tracker/logs:/projetos/encore-tracker/logs
+    deploy: *lim-medio
     logging: *log-limits
 
   # ── Encore/HiBid: históricos de lances (fila própria) ──────────────────
   encore-historian:
-    image: node:22-alpine
+    image: node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
     command: ["node", "--no-warnings", "src/historian.js"]
     working_dir: /projetos/encore-tracker
     user: "1000:1000"
@@ -186,11 +240,12 @@ services:
       - ${APP_DATA_DIR}/src/encore-tracker:/projetos/encore-tracker:ro
       - ${APP_DATA_DIR}/src/encore-tracker/data:/projetos/encore-tracker/data
       - ${APP_DATA_DIR}/src/encore-tracker/logs:/projetos/encore-tracker/logs
+    deploy: *lim-medio
     logging: *log-limits
 
   # ── Liquidation Max/HiBid: lotes + fechamento ──────────────────────────
   lmax-sweeper:
-    image: node:22-alpine
+    image: node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
     command: ["node", "--no-warnings", "src/sweeper.js"]
     working_dir: /projetos/lmax-tracker
     user: "1000:1000"
@@ -200,11 +255,12 @@ services:
       - ${APP_DATA_DIR}/src/lmax-tracker:/projetos/lmax-tracker:ro
       - ${APP_DATA_DIR}/src/lmax-tracker/data:/projetos/lmax-tracker/data
       - ${APP_DATA_DIR}/src/lmax-tracker/logs:/projetos/lmax-tracker/logs
+    deploy: *lim-medio
     logging: *log-limits
 
   # ── Liquidation Max/HiBid: históricos de lances (fila própria) ─────────
   lmax-historian:
-    image: node:22-alpine
+    image: node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
     command: ["node", "--no-warnings", "src/historian.js"]
     working_dir: /projetos/lmax-tracker
     user: "1000:1000"
@@ -214,11 +270,12 @@ services:
       - ${APP_DATA_DIR}/src/lmax-tracker:/projetos/lmax-tracker:ro
       - ${APP_DATA_DIR}/src/lmax-tracker/data:/projetos/lmax-tracker/data
       - ${APP_DATA_DIR}/src/lmax-tracker/logs:/projetos/lmax-tracker/logs
+    deploy: *lim-medio
     logging: *log-limits
 
   # ── Auction Mongers/HiBid: lotes + fechamento ──────────────────────────
   mongers-sweeper:
-    image: node:22-alpine
+    image: node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
     command: ["node", "--no-warnings", "src/sweeper.js"]
     working_dir: /projetos/mongers-tracker
     user: "1000:1000"
@@ -228,11 +285,12 @@ services:
       - ${APP_DATA_DIR}/src/mongers-tracker:/projetos/mongers-tracker:ro
       - ${APP_DATA_DIR}/src/mongers-tracker/data:/projetos/mongers-tracker/data
       - ${APP_DATA_DIR}/src/mongers-tracker/logs:/projetos/mongers-tracker/logs
+    deploy: *lim-medio
     logging: *log-limits
 
   # ── Auction Mongers/HiBid: históricos de lances (fila própria) ─────────
   mongers-historian:
-    image: node:22-alpine
+    image: node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
     command: ["node", "--no-warnings", "src/historian.js"]
     working_dir: /projetos/mongers-tracker
     user: "1000:1000"
@@ -242,11 +300,12 @@ services:
       - ${APP_DATA_DIR}/src/mongers-tracker:/projetos/mongers-tracker:ro
       - ${APP_DATA_DIR}/src/mongers-tracker/data:/projetos/mongers-tracker/data
       - ${APP_DATA_DIR}/src/mongers-tracker/logs:/projetos/mongers-tracker/logs
+    deploy: *lim-medio
     logging: *log-limits
 
   # ── McKenzie's/HiBid: lotes + fechamento ───────────────────────────────
   mckenzies-sweeper:
-    image: node:22-alpine
+    image: node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
     command: ["node", "--no-warnings", "src/sweeper.js"]
     working_dir: /projetos/mckenzies-tracker
     user: "1000:1000"
@@ -256,11 +315,12 @@ services:
       - ${APP_DATA_DIR}/src/mckenzies-tracker:/projetos/mckenzies-tracker:ro
       - ${APP_DATA_DIR}/src/mckenzies-tracker/data:/projetos/mckenzies-tracker/data
       - ${APP_DATA_DIR}/src/mckenzies-tracker/logs:/projetos/mckenzies-tracker/logs
+    deploy: *lim-medio
     logging: *log-limits
 
   # ── McKenzie's/HiBid: históricos de lances (fila própria) ──────────────
   mckenzies-historian:
-    image: node:22-alpine
+    image: node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
     command: ["node", "--no-warnings", "src/historian.js"]
     working_dir: /projetos/mckenzies-tracker
     user: "1000:1000"
@@ -270,12 +330,13 @@ services:
       - ${APP_DATA_DIR}/src/mckenzies-tracker:/projetos/mckenzies-tracker:ro
       - ${APP_DATA_DIR}/src/mckenzies-tracker/data:/projetos/mckenzies-tracker/data
       - ${APP_DATA_DIR}/src/mckenzies-tracker/logs:/projetos/mckenzies-tracker/logs
+    deploy: *lim-medio
     logging: *log-limits
 
   # ── Valor de mercado (comps internos por condição + Amazon.ca) ─────────
   # Lê os 5 bancos em somente-leitura; grava só na própria pasta (values.db + logs).
   valores:
-    image: node:22-alpine
+    image: node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
     command: ["node", "--no-warnings", "src/worker.js", "--loop"]
     working_dir: /projetos/product-values
     user: "1000:1000"
@@ -290,12 +351,17 @@ services:
       - ${APP_DATA_DIR}/src/lmax-tracker:/projetos/lmax-tracker:ro
       - ${APP_DATA_DIR}/src/mongers-tracker:/projetos/mongers-tracker:ro
       - ${APP_DATA_DIR}/src/mckenzies-tracker:/projetos/mckenzies-tracker:ro
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 768M
     logging: *log-limits
 
   # ── Backup consistente dos bancos (VACUUM INTO, a cada 6 h, 7 cópias) ──
   # Lê todos os bancos; grava somente em backups/ e logs/ (fora esses, só leitura).
   backup:
-    image: node:22-alpine
+    image: node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
     command: ["node", "--no-warnings", "src/backup.js"]
     working_dir: /projetos/auction-dashboard
     user: "1000:1000"
@@ -315,4 +381,5 @@ services:
       - ${APP_DATA_DIR}/src/mckenzies-tracker:/projetos/mckenzies-tracker:ro
       - ${APP_DATA_DIR}/src/product-values:/projetos/product-values:ro
       - ${APP_DATA_DIR}/src/auth-service:/projetos/auth-service:ro
+    deploy: *lim-medio
     logging: *log-limits
