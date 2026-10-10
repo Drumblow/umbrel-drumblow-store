@@ -134,12 +134,14 @@ services:
       AUTH_PORT: "8791"
       AUTH_DB: /app/data/auth.db
       AUTH_LOG_DIR: /app/logs
+      PAINEL_IP_SEGREDO_FILE: /segredos/auth.env   # A22 exo: valida o x-real-ip assinado pelo porteiro
     volumes:
       # código :ro; escrita só no banco (data/) e nos logs
       - ${APP_DATA_DIR}/src/auth-service:/app:ro
       - ${APP_DATA_DIR}/src/auth-service/data:/app/data
       - ${APP_DATA_DIR}/src/auth-service/logs:/app/logs
       - ${APP_DATA_DIR}/smtp.env:/app/smtp.env:ro
+      - ${APP_DATA_DIR}/auth.env:/segredos/auth.env:ro   # A22 exo: só leitura do segredo (nunca do banco)
     healthcheck:
       test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8791/health || exit 1"]
       interval: 60s

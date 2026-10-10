@@ -32,16 +32,17 @@ mkdir -p \
 chown -R 1000:1000 "$APP_DATA_DIR/src" 2>/dev/null || true
 chmod 700 "$APP_DATA_DIR/src" 2>/dev/null || true
 
-# ── Senha do porteiro (acesso externo) ─────────────────────────────────────
-# Fica FORA do repositório público. O painel continua aberto na LAN e na interface do
-# umbrelOS; esta senha vale só para o caminho público (Tailscale Funnel → função na Vercel).
+# ── Segredo do IP assinado (acesso externo) ────────────────────────────────
+# Fica FORA do repositório público. Assina o IP real do visitante entre a função da Vercel e o
+# porteiro (A12 exo: antes este arquivo só tinha a senha Basic morta do modelo antigo — o segredo
+# real nunca era provisionado e o rate-limit do caminho público virava um balde global).
 if [ ! -f "$APP_DATA_DIR/auth.env" ]; then
-  SENHA="$( (openssl rand -base64 24 2>/dev/null || head -c 24 /dev/urandom | base64) | tr -d '/+=' | cut -c1-28 )"
-  printf 'PAINEL_USUARIO=umbrel\nPAINEL_SENHA=%s\n' "$SENHA" > "$APP_DATA_DIR/auth.env"
+  SEGREDO="$( (openssl rand -hex 32 2>/dev/null || head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n') )"
+  printf 'IP_SEGREDO=%s\n' "$SEGREDO" > "$APP_DATA_DIR/auth.env"
   chmod 600 "$APP_DATA_DIR/auth.env" 2>/dev/null || true
   chown 1000:1000 "$APP_DATA_DIR/auth.env" 2>/dev/null || true
-  echo "[drumblow-leiloes] senha do porteiro criada em $APP_DATA_DIR/auth.env"
-  echo "[drumblow-leiloes] veja com: cat \"$APP_DATA_DIR/auth.env\""
+  echo "[drumblow-leiloes] IP_SEGREDO criado em $APP_DATA_DIR/auth.env"
+  echo "[drumblow-leiloes] copie o valor para a env IP_SEGREDO da Vercel (mesmo segredo nos dois lados)"
 else
   echo "[drumblow-leiloes] $APP_DATA_DIR/auth.env já existe — mantido"
 fi
