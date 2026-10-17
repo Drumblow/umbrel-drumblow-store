@@ -68,6 +68,8 @@ services:
       # 0.0.0.0 é obrigatório em container: com 127.0.0.1 o gateway do umbrelOS não alcança o
       # painel e a porta do app nunca é publicada (foi o que travou a primeira instalação).
       HOST: "0.0.0.0"
+      # opção B (1.6.0): o login do bot Bid416 roda no navegador dedicado (serviço browser)
+      BID416_CDP: "http://browser:3000"
     volumes:
       # código :ro; escrita só no próprio data/ (pid do painel) e logs/. Os demais projetos são
       # lidos em :ro (a leitura de banco SQLite em WAL funciona com os sidecars criados pelos
@@ -90,6 +92,32 @@ services:
       retries: 3
       start_period: 30s
     deploy: *lim-medio
+    logging: *log-limits
+
+  # ── Navegador dedicado (opção B do bot Bid416) ─────────────────────────
+  # Só o painel (web) fala com ele, pela rede interna (BID416_CDP=http://browser:3000).
+  # Usado SÓ no ato do login: um navegador real gera o token reCAPTCHA v3 do Bid416
+  # (o fluxo HTTP puro falha — testado). Sem porta publicada; perfil efêmero (tmpfs).
+  browser:
+    image: ghcr.io/browserless/chromium@sha256:c62cf104709509191ca78e2b3d9232528fabc93a6dbb37cbadd511886324b657
+    restart: unless-stopped
+    environment:
+      CONCURRENT: "1"
+      QUEUE_LIMIT: "1"
+      TIMEOUT: "120000"
+    tmpfs:
+      - /tmp:size=256m
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3000/json/version').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 768M
     logging: *log-limits
 
   # ── Porteiro do acesso externo (limite de requisições + contas) ────────
