@@ -4,7 +4,7 @@ category: files
 name: Painel do Escritório
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-painel/icon.svg
-version: "0.3.16"
+version: "0.3.17"
 tagline: Mesa de trabalho do escritório de advocacia, no seu próprio servidor
 description: >-
   Painel de gestão para escritório de advocacia que roda no seu servidor: prazos, processos,
@@ -40,4 +40,15 @@ backupIgnore:
   - data/dados/cache
   - data/backups/*.tmp
 releaseNotes: >-
-  Assistente no painel: o painel da direita passa a conversar com o assistente do escritório, com o modelo configurado no Hermes; ele vê os processos normais, nunca os de segredo de justiça, e a mensagem que cita um processo protegido não sai do painel. Modelos de mensagem: o WhatsApp e o e-mail da ficha do cliente abrem a mensagem já preenchida, editável antes de enviar; os modelos ficam na nova aba Escritório das Configurações. Relatórios: nova aba Produtividade, mês a mês, com a comparação com o mês anterior. Configurações: nova aba Como usar, com o passo a passo de cada tela.
+  O Richard ficou rápido e transparente, e o escritório ganhou as notas.
+  
+  Do Richard:
+  - A resposta chega enquanto ele trabalha, com o raciocínio e os passos das ferramentas à vista (o raciocínio fica recolhido; é só abrir).
+  - Acabou o corte de 5 minutos: perguntas grandes vão inteiras, até 20.000 caracteres.
+  - O "Parar" interrompe de verdade, inclusive antes de a resposta começar.
+  - Conversas antigas abrem vazias no modo novo: comece uma conversa nova depois de atualizar.
+  
+  Do escritório (0.3.16):
+  - Notas por cliente e por processo, com importação do Evernote e conferência.
+  - Diário, "o que importa agora", telefones, dinheiro anotado e pendências.
+  - Pasta física e processos antigos.
