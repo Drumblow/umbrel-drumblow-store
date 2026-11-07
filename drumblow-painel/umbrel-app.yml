@@ -4,7 +4,7 @@ category: files
 name: Painel do Escritório
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-painel/icon.svg
-version: "0.3.17"
+version: "0.3.18"
 tagline: Mesa de trabalho do escritório de advocacia, no seu próprio servidor
 description: >-
   Painel de gestão para escritório de advocacia que roda no seu servidor: prazos, processos,
@@ -40,15 +40,8 @@ backupIgnore:
   - data/dados/cache
   - data/backups/*.tmp
 releaseNotes: >-
-  O Richard ficou rápido e transparente, e o escritório ganhou as notas.
+  O Richard agora mostra o que está fazendo, e não só "trabalhando".
   
-  Do Richard:
-  - A resposta chega enquanto ele trabalha, com o raciocínio e os passos das ferramentas à vista (o raciocínio fica recolhido; é só abrir).
-  - Acabou o corte de 5 minutos: perguntas grandes vão inteiras, até 20.000 caracteres.
-  - O "Parar" interrompe de verdade, inclusive antes de a resposta começar.
-  - Conversas antigas abrem vazias no modo novo: comece uma conversa nova depois de atualizar.
-  
-  Do escritório (0.3.16):
-  - Notas por cliente e por processo, com importação do Evernote e conferência.
-  - Diário, "o que importa agora", telefones, dinheiro anotado e pendências.
-  - Pasta física e processos antigos.
+  - Cada passo das ferramentas vem com o detalhe: o comando que ele está rodando, a busca que fez, o documento que abriu.
+  - As frases que ele fala no meio do trabalho aparecem no bloco de raciocínio.
+  - O resto continua igual: texto ao vivo, sem corte de 5 minutos, "Parar" de verdade.
