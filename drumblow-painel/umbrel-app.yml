@@ -4,7 +4,7 @@ category: files
 name: Painel do Escritório
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-painel/icon.svg
-version: "0.3.18"
+version: "0.3.19"
 tagline: Mesa de trabalho do escritório de advocacia, no seu próprio servidor
 description: >-
   Painel de gestão para escritório de advocacia que roda no seu servidor: prazos, processos,
@@ -40,8 +40,12 @@ backupIgnore:
   - data/dados/cache
   - data/backups/*.tmp
 releaseNotes: >-
-  O Richard agora mostra o que está fazendo, e não só "trabalhando".
-  
-  - Cada passo das ferramentas vem com o detalhe: o comando que ele está rodando, a busca que fez, o documento que abriu.
-  - As frases que ele fala no meio do trabalho aparecem no bloco de raciocínio.
-  - O resto continua igual: texto ao vivo, sem corte de 5 minutos, "Parar" de verdade.
+  O Estúdio chegou: a peça é escrita e impressa dentro do painel.
+
+
+  - Editor de verdade no lugar do campo de texto: 25 controles em cinco grupos (títulos, listas, recuo, entrelinha, quebra de página, tabela, símbolo), tudo com a classe do escritório.
+  - Localizar e substituir com Ctrl+F, contagem de palavras e o contador de pendências [conferir] na faixa.
+  - O texto é gravado sozinho a cada 1,5 segundo e não se perde: nem com duas abas abertas, nem quando o servidor recusa.
+  - Imagens entram por upload (o timbre), conferidas pelo conteúdo do arquivo, e ficam guardadas no banco do próprio servidor.
+  - Impressão em A4 com as margens da folha na tela; "Imprimir" grava antes de abrir o papel.
+  - Por dentro, o SQLite foi atualizado para a 3.54.1 (correção de segurança RUSTSEC-2026-0459).
