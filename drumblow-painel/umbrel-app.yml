@@ -4,7 +4,7 @@ category: files
 name: Painel do Escritório
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-painel/icon.svg
-version: "0.3.20"
+version: "0.3.21"
 tagline: Mesa de trabalho do escritório de advocacia, no seu próprio servidor
 description: >-
   Painel de gestão para escritório de advocacia que roda no seu servidor: prazos, processos,
@@ -40,8 +40,18 @@ backupIgnore:
   - data/dados/cache
   - data/backups/*.tmp
 releaseNotes: >-
-  O Estúdio agora aparece no MENU, logo abaixo de "Meu dia" — antes ele só abria pela ficha de um
-  processo ("Redigir peça"), e não havia como achá-lo.
+  Esta versão traz a barra completa do Estúdio.
+
+  No Estúdio, a barra da peça agora tem títulos (1 a 3), listas com marcador e numeradas, recuo de
+  0 a 6, entrelinha, primeira linha e espaços antes e depois do parágrafo, hifenização, quebra de
+  página, linha horizontal, tabela, símbolo e alinhamento.
+
+  Entraram também a busca e a substituição (Ctrl+F, com "N de M"), a contagem de palavras,
+  caracteres e pendências "[conferir]", o "ir para o item N", o zoom de 75% a 150%, o corretor do
+  navegador e os modos Folha A4 e Texto contínuo.
+
+  O cabeçalho e o rodapé da página já aparecem no papel: dê um duplo clique neles para escrever, e
+  use os campos "Página" e "Total de páginas" para a numeração sair certa em cada folha.
 
 
   - Editor de verdade no lugar do campo de texto: 25 controles em cinco grupos (títulos, listas, recuo, entrelinha, quebra de página, tabela, símbolo), tudo com a classe do escritório.
