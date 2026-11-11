@@ -4,7 +4,7 @@ category: files
 name: Painel do Escritório
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-painel/icon.svg
-version: "0.3.22"
+version: "0.3.23"
 tagline: Mesa de trabalho do escritório de advocacia, no seu próprio servidor
 description: >-
   Painel de gestão para escritório de advocacia que roda no seu servidor: prazos, processos,
@@ -40,7 +40,17 @@ backupIgnore:
   - data/dados/cache
   - data/backups/*.tmp
 releaseNotes: >-
-  Esta versão traz a PÁGINA do Estúdio: o cabeçalho, o rodapé e a impressão.
+  Esta versão fecha a SAÍDA da peça: versões, cópia, DOCX e PDF.
+
+  O painel de versões lista o que já foi gravado, deixa escolher duas e mostra a diferença por bloco —
+  o texto antigo aparece riscado, e restaurar recarrega a peça na hora.
+
+  "Copiar" leva a peça para o Word e para o PJe com a formatação preservada (e em texto simples, com as
+  listas legíveis). O DOCX sai em A4, Times New Roman 12, justificado, com o timbre no alto de todas as
+  páginas, o rodapé do escritório, "Página 1 de N" e o contador de pendências.
+
+  "Salvar PDF" é a mesma impressão em folhas, agora garantindo que a peça foi gravada antes — e não
+  imprime se a gravação falhar.
 
   No alto e no pé do papel agora dá para escrever com um duplo clique — o cabeçalho vira o timbre
   do escritório e o rodapé recebe a numeração. Os campos "Página" e "Total de páginas" saem como
