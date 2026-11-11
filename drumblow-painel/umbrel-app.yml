@@ -4,7 +4,7 @@ category: files
 name: Painel do Escritório
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-painel/icon.svg
-version: "0.3.23"
+version: "0.3.24"
 tagline: Mesa de trabalho do escritório de advocacia, no seu próprio servidor
 description: >-
   Painel de gestão para escritório de advocacia que roda no seu servidor: prazos, processos,
@@ -40,44 +40,9 @@ backupIgnore:
   - data/dados/cache
   - data/backups/*.tmp
 releaseNotes: >-
-  Esta versão fecha a SAÍDA da peça: versões, cópia, DOCX e PDF.
+  A peça impressa agora avisa o que falta conferir.
 
-  O painel de versões lista o que já foi gravado, deixa escolher duas e mostra a diferença por bloco —
-  o texto antigo aparece riscado, e restaurar recarrega a peça na hora.
-
-  "Copiar" leva a peça para o Word e para o PJe com a formatação preservada (e em texto simples, com as
-  listas legíveis). O DOCX sai em A4, Times New Roman 12, justificado, com o timbre no alto de todas as
-  páginas, o rodapé do escritório, "Página 1 de N" e o contador de pendências.
-
-  "Salvar PDF" é a mesma impressão em folhas, agora garantindo que a peça foi gravada antes — e não
-  imprime se a gravação falhar.
-
-  No alto e no pé do papel agora dá para escrever com um duplo clique — o cabeçalho vira o timbre
-  do escritório e o rodapé recebe a numeração. Os campos "Página" e "Total de páginas" saem como
-  "Página 1 de 3" (e o número muda em cada folha); "Processo" e "Data" preenchem sozinhos.
-
-  A impressão deixou de ser uma cópia da tela: a peça é medida e dividida em folhas A4 de verdade,
-  com o timbre em todas elas, sem página em branco e sem parágrafo cortado no meio. A prévia mostra
-  exatamente o que sai.
-
-  Também entraram os espaços antes e depois do parágrafo, a primeira linha, a hifenização e a
-  contagem de palavras e pendências na barra.
-
-  No Estúdio, a barra da peça agora tem títulos (1 a 3), listas com marcador e numeradas, recuo de
-  0 a 6, entrelinha, primeira linha e espaços antes e depois do parágrafo, hifenização, quebra de
-  página, linha horizontal, tabela, símbolo e alinhamento.
-
-  Entraram também a busca e a substituição (Ctrl+F, com "N de M"), a contagem de palavras,
-  caracteres e pendências "[conferir]", o "ir para o item N", o zoom de 75% a 150%, o corretor do
-  navegador e os modos Folha A4 e Texto contínuo.
-
-  O cabeçalho e o rodapé da página já aparecem no papel: dê um duplo clique neles para escrever, e
-  use os campos "Página" e "Total de páginas" para a numeração sair certa em cada folha.
-
-
-  - Editor de verdade no lugar do campo de texto: 25 controles em cinco grupos (títulos, listas, recuo, entrelinha, quebra de página, tabela, símbolo), tudo com a classe do escritório.
-  - Localizar e substituir com Ctrl+F, contagem de palavras e o contador de pendências [conferir] na faixa.
-  - O texto é gravado sozinho a cada 1,5 segundo e não se perde: nem com duas abas abertas, nem quando o servidor recusa.
-  - Imagens entram por upload (o timbre), conferidas pelo conteúdo do arquivo, e ficam guardadas no banco do próprio servidor.
-  - Impressão em A4 com as margens da folha na tela; "Imprimir" grava antes de abrir o papel.
-  - Por dentro, o SQLite foi atualizado para a 3.54.1 (correção de segurança RUSTSEC-2026-0459).
+  - O contador de pendências aparece no pé de cada folha impressa, com o mesmo número da faixa: "3 pendências a conferir".
+  - Peça sem pendências não ganha aviso, e o pé da folha não fica vazio.
+  - O pé e o timbre passam a sair na tipografia do escritório (Times), com o contador abaixo deles.
+  - A altura do contador entra na conta da paginação: nenhum bloco invade mais os últimos milímetros da folha.
