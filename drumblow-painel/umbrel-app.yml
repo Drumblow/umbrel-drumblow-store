@@ -4,7 +4,7 @@ category: files
 name: Painel do Escritório
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-painel/icon.svg
-version: "0.3.25"
+version: "0.3.26"
 tagline: Mesa de trabalho do escritório de advocacia, no seu próprio servidor
 description: >-
   Painel de gestão para escritório de advocacia que roda no seu servidor: prazos, processos,
@@ -40,14 +40,15 @@ backupIgnore:
   - data/dados/cache
   - data/backups/*.tmp
 releaseNotes: >-
-  A peça ganha o padrão do escritório e os dados do processo.
+  Correções da peça que estava na versão anterior.
   
-  - Configurações → Estúdio: o padrão da peça nova (fonte, tamanho, entrelinha, margens e o timbre). A peça criada depois copia esse padrão; as que já existem não mudam.
-  - A página da peça vale na TELA e no papel: fonte, tamanho e margens aparecem como foram gravados na peça.
-  - Botão "Dados" na peça: insere nome do cliente, CPF, processo, vara e o que mais o processo tiver; o que não existe entra como [conferir].
-  - "Atualizar dados da peça" relê o processo e avisa quantos dados mudaram.
-  - O dado do processo sai no DOCX e na impressão, e conta na faixa de pendências.
-  - Impressão: a paginação passou a respeitar as margens da peça (não corta mais o pé da folha).
+  - Impressão: a paginação respeita as margens da peça e o zoom da tela. Antes, com margens maiores, o pé da folha podia ser cortado sem aviso.
+  - O contador de pendências no pé entra na conta da página (soma a margem do aviso).
+  - "Localizar e substituir" não apaga mais um dado do processo: um trecho que está dentro de um dado não é substituído, e a tela avisa quantos ficaram de fora.
+  - O dado do processo aparece no DOCX (antes saía em branco) e conta nas palavras e nos caracteres.
+  - O timbre aparece igual na tela e no papel (Times, centrado).
+  - Configurações → Estúdio: margem vazia não vira 0 mm sem aviso, valor acima de 60 é recusado com mensagem do painel, e o "Preferências gravadas" some quando você mexe num campo.
+  - O painel "Dados" da peça recebe o foco ao abrir e devolve ao botão ao fechar.
 
   - O contador de pendências aparece no pé de cada folha impressa, com o mesmo número da faixa: "3 pendências a conferir".
   - Peça sem pendências não ganha aviso, e o pé da folha não fica vazio.
