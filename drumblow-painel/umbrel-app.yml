@@ -4,7 +4,7 @@ category: files
 name: Painel do Escritório
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-painel/icon.svg
-version: "0.3.30"
+version: "0.3.31"
 tagline: Mesa de trabalho do escritório de advocacia, no seu próprio servidor
 description: >-
   Painel de gestão para escritório de advocacia que roda no seu servidor: prazos, processos,
@@ -40,19 +40,27 @@ backupIgnore:
   - data/dados/cache
   - data/backups/*.tmp
 releaseNotes: >-
-  O Richard escreve na peça.
+  O Richard agora escreve DENTRO da peça, como sugestão:
   
-  - Selecione um trecho: o menu do trecho traz as ações dele (reescrever, encurtar, continuar,
-    corrigir, conferir e redigir). Escreva a instrução na margem CONVERSA e ele escreve ali, ao vivo.
-  - O texto que ele escreve aparece com a autoria dele, marcado por bloco, e o que você digita continua
-    sendo seu.
-  - Quando a proposta reescreve um trecho que já existe, ela chega como **cartão**: você vê a proposta
-    inteira e só entra se você aceitar — e aceitar **troca** o trecho (com Ctrl+Z para voltar).
-  - "Desfazer a geração" tira só o que ele escreveu e você não editou.
-  - Antes de qualquer envio, a peça passa pela guarda de sigilo: processo em segredo, restrito ou com o
-    envio desligado, documento protegido e CPF/CNPJ no texto bloqueiam o pedido, com a frase na tela.
-  - A margem CONVERSA mostra o que aconteceu (pedido, bloqueio, conclusão, parada, falha) sem nunca
-    mostrar o texto da peça nem o número do processo.
+  - pedir uma reescrita abre a proposta no próprio texto — o trecho que sai fica riscado, o que entra
+    fica marcado logo depois;
+  - dá para aceitar ou recusar POR TRECHO, ou a proposta inteira no cartão;
+  - recusar devolve o texto exatamente como estava (conferido byte a byte, inclusive depois de
+    recarregar a página);
+  - travar um trecho impede que o assistente (ou uma sugestão) mexa nele — com a frase dizendo o que
+    fazer para destravar;
+  - enquanto houver proposta pendente, o DOCX e a impressão (inclusive Ctrl+P e Salvar PDF) são
+    recusados, com o aviso de decidir ou desfazer antes — nenhum arquivo sai com as duas versões;
+  - a cópia sai limpa, sem o texto da proposta que ainda não foi aceita;
+  - "Desfazer a geração" devolve o trecho inteiro, mesmo quando a âncora foi partida em dois parágrafos.
+  
+  Também nesta versão:
+  
+  - "Conferir" agora só lê e responde na conversa — não mexe mais no texto;
+  - resposta do assistente que chega muito rápido não vira mais "proposta sem texto";
+  - se o assistente cai, a mensagem fala de conexão (não culpa a proposta) e o menu volta sozinho quando
+    ele retorna;
+  - o aviso de "DOCX gerado" some sozinho depois de alguns segundos.
 
   - O contador de pendências aparece no pé de cada folha impressa, com o mesmo número da faixa: "3 pendências a conferir".
   - Peça sem pendências não ganha aviso, e o pé da folha não fica vazio.
