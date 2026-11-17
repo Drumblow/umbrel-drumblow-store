@@ -4,7 +4,7 @@ category: files
 name: Painel do Escritório
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-painel/icon.svg
-version: "0.3.31"
+version: "0.3.32"
 tagline: Mesa de trabalho do escritório de advocacia, no seu próprio servidor
 description: >-
   Painel de gestão para escritório de advocacia que roda no seu servidor: prazos, processos,
@@ -40,27 +40,22 @@ backupIgnore:
   - data/dados/cache
   - data/backups/*.tmp
 releaseNotes: >-
-  O Richard agora escreve DENTRO da peça, como sugestão:
+  A margem FONTES e as citações chegaram:
   
-  - pedir uma reescrita abre a proposta no próprio texto — o trecho que sai fica riscado, o que entra
-    fica marcado logo depois;
-  - dá para aceitar ou recusar POR TRECHO, ou a proposta inteira no cartão;
-  - recusar devolve o texto exatamente como estava (conferido byte a byte, inclusive depois de
-    recarregar a página);
-  - travar um trecho impede que o assistente (ou uma sugestão) mexa nele — com a frase dizendo o que
-    fazer para destravar;
-  - enquanto houver proposta pendente, o DOCX e a impressão (inclusive Ctrl+P e Salvar PDF) são
-    recusados, com o aviso de decidir ou desfazer antes — nenhum arquivo sai com as duas versões;
-  - a cópia sai limpa, sem o texto da proposta que ainda não foi aceita;
-  - "Desfazer a geração" devolve o trecho inteiro, mesmo quando a âncora foi partida em dois parágrafos.
+  - **Citar fonte** num trecho: escolha um documento do acervo e a citação entra no texto com documento e
+    página ("Doc — p. 12") — e sai igual no DOCX, na impressão e na cópia;
+  - a margem **FONTES** mostra as citações que já estão na peça (clique abre o PDF **na página citada**, em
+    aba nova), os parágrafos **"sem fonte — conferir"** e a busca do acervo;
+  - documento de processo **protegido** aparece com cadeado e a frase explica: ele não vai ao assistente;
+  - **"sem fonte" é aviso, não portão**: o DOCX, a impressão e a cópia continuam saindo normalmente.
   
-  Também nesta versão:
+  E o freio que travava a conversa:
   
-  - "Conferir" agora só lê e responde na conversa — não mexe mais no texto;
-  - resposta do assistente que chega muito rápido não vira mais "proposta sem texto";
-  - se o assistente cai, a mensagem fala de conexão (não culpa a proposta) e o menu volta sozinho quando
-    ele retorna;
-  - o aviso de "DOCX gerado" some sozinho depois de alguns segundos.
+  - quando a peça deixa de ter documento protegido citado, o aviso e o botão desligado **saem sozinhos** —
+    sem recarregar a página (antes só um F5 soltava);
+  - o contrário também: inserir uma citação protegida **desce** o freio na hora;
+  - a recusa de geração com documento protegido vale no pedido, no aviso e na hora de falar com o
+    assistente — nada sai para o modelo.
 
   - O contador de pendências aparece no pé de cada folha impressa, com o mesmo número da faixa: "3 pendências a conferir".
   - Peça sem pendências não ganha aviso, e o pé da folha não fica vazio.
