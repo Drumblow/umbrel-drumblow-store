@@ -67,9 +67,8 @@ backupIgnore:
   - tailscale.env
   - ts-state
   - ts-state/*
-releaseNotes:
-  - Coletor REGIONAL (novo): descobre os leilões públicos do HiBid em Ontário num raio de 100 mi de Sarnia (69 leilões, ~46 mil lotes) e ignora os que já são das 4 casas; varredura de 1.000 lotes por requisição e histórico de 10 em 10.
-   >-
+releaseNotes: >-
+  Regional (novo): descobre os leilões públicos do HiBid em Ontário num raio de 100 mi de Sarnia (69 leilões abertos, ~46 mil lotes) e ignora os que já são das 4 casas; varredura de 1.000 lotes por requisição e histórico de 10 em 10.
   1.6.1: a coleta parou de tomar bloqueio do HiBid. O site recusava ~70% das consultas (erro 429)
   porque os oito coletores pediam ao mesmo tempo, sem ritmo combinado. Agora cada coletor tem um
   ritmo único (uma consulta a cada 7 s), com recuo automático quando o site pede calma: pausa de
