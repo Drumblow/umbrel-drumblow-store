@@ -4,7 +4,7 @@ category: files
 name: Leilões — Coletor e Painel
 # Sem este campo o umbreld procura o ícone na galeria oficial, que não tem apps de loja comunitária.
 icon: https://raw.githubusercontent.com/Drumblow/umbrel-drumblow-store/main/drumblow-leiloes/icon.svg
-version: "1.6.0"
+version: "1.6.1"
 tagline: Coleta 6 casas de leilão (KOTN + HiBid + Bid416), guarda os lances e mostra o valor de mercado
 description: >-
   Coletor e painel dos leilões que você acompanha (King of the North, Encore Auctions, Liquidation
@@ -68,6 +68,25 @@ backupIgnore:
   - ts-state
   - ts-state/*
 releaseNotes: >-
+  1.6.1: a coleta parou de tomar bloqueio do HiBid. O site recusava ~70% das consultas (erro 429)
+  porque os oito coletores pediam ao mesmo tempo, sem ritmo combinado. Agora cada coletor tem um
+  ritmo único (uma consulta a cada 7 s), com recuo automático quando o site pede calma: pausa de
+  1, 2, 4, 8 e até 15 minutos, e só volta ao ritmo normal depois de 20 respostas boas seguidas.
+  Quando o bloqueio acontece, a coleta para em vez de insistir (insistir mantinha o servidor na
+  mira) e o lote NÃO se perde: volta para a fila em 60 s sem contar como tentativa; num bloqueio
+  de borda (403/página de desafio) espera 1 h. Ao voltar, a coleta recupera a janela perdida
+  começando pelos lotes que fecharam mais recentemente — antes, um lote que fechava durante a
+  pausa podia ficar para trás na fila de vencidos. O log mostra o estado do ritmo em cada linha
+  de status (rl=ok|pause e req/h).
+
+  No bot de lances, o ritmo vale só para as leituras de vitrine (o lance em si continua na hora)
+  e a confirmação ficou mais rigorosa: só conta como sucesso quando o valor no site é exatamente
+  o ofertado E o contador de lances subiu em relação ao instante anterior — antes, um lance já
+  superado podia ser lido como "o meu entrou". Em caso de 429, o bot tenta uma única vez,
+  respeitando o tempo que o site pedir (entre 1 e 5 s).
+
+  Sem mudança de configuração: é só atualizar e ligar o app.
+
   1.6.0: bot do Bid416 (Toronto) com login por conta (opção B) — o painel guarda o seu e-mail e a
   senha CRIPTOGRAFADOS e executa o login num navegador dedicado (serviço novo "browser", sem porta
   publicada), porque o Bid416 exige reCAPTCHA v3 que só um navegador real resolve. A sessão se
