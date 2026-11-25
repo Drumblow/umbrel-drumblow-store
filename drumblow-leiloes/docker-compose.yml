@@ -364,6 +364,45 @@ services:
     deploy: *lim-medio
     logging: *log-limits
 
+  # ── REGIONAL (Ontário, raio de Sarnia): leilões públicos do HiBid ──────
+  # Descobre em hibid.com (state=ON, 100 mi de N7T) e ignora leilão que já é das 4
+  # casas. Lê os bancos das casas em somente-leitura para a dedupe.
+  regional-sweeper:
+    image: node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
+    command: ["node", "--no-warnings", "src/sweeper.js"]
+    working_dir: /projetos/regional-tracker
+    user: "1000:1000"
+    restart: unless-stopped
+    stop_grace_period: 30s
+    volumes:
+      - ${APP_DATA_DIR}/src/regional-tracker:/projetos/regional-tracker:ro
+      - ${APP_DATA_DIR}/src/regional-tracker/data:/projetos/regional-tracker/data
+      - ${APP_DATA_DIR}/src/regional-tracker/logs:/projetos/regional-tracker/logs
+      - ${APP_DATA_DIR}/src/encore-tracker/data:/projetos/encore-tracker/data:ro
+      - ${APP_DATA_DIR}/src/lmax-tracker/data:/projetos/lmax-tracker/data:ro
+      - ${APP_DATA_DIR}/src/mongers-tracker/data:/projetos/mongers-tracker/data:ro
+      - ${APP_DATA_DIR}/src/mckenzies-tracker/data:/projetos/mckenzies-tracker/data:ro
+    deploy: *lim-medio
+    logging: *log-limits
+
+  regional-historian:
+    image: node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
+    command: ["node", "--no-warnings", "src/historian.js"]
+    working_dir: /projetos/regional-tracker
+    user: "1000:1000"
+    restart: unless-stopped
+    stop_grace_period: 30s
+    volumes:
+      - ${APP_DATA_DIR}/src/regional-tracker:/projetos/regional-tracker:ro
+      - ${APP_DATA_DIR}/src/regional-tracker/data:/projetos/regional-tracker/data
+      - ${APP_DATA_DIR}/src/regional-tracker/logs:/projetos/regional-tracker/logs
+      - ${APP_DATA_DIR}/src/encore-tracker/data:/projetos/encore-tracker/data:ro
+      - ${APP_DATA_DIR}/src/lmax-tracker/data:/projetos/lmax-tracker/data:ro
+      - ${APP_DATA_DIR}/src/mongers-tracker/data:/projetos/mongers-tracker/data:ro
+      - ${APP_DATA_DIR}/src/mckenzies-tracker/data:/projetos/mckenzies-tracker/data:ro
+    deploy: *lim-medio
+    logging: *log-limits
+
   # ── Bid416 (Toronto): lotes + fechamento + detalhes (processo único, HTML) ──
   # Lê o site por HTTP (robots: só /Event*, /Browse, /Search); grava no próprio data/ + logs/.
   bid416-main:
